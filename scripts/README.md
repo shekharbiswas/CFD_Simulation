@@ -63,6 +63,23 @@ A clear success/failure statement is printed for each hypothesis.
 
 In addition to the basic classic vs. CFD comparison, several advanced simulations are implemented to deepen the analysis:
 
+
+Performance and risk analysis
+1) Performance hypothesis: The use of CFDs leads to a higher average portfolio return compared to a traditional portfolio without CFDs.
+ 
+Performance and risk analysis
+2) Risk hypothesis: The use of CFDs increases the volatility of the portfolio compared to a traditional portfolio.
+ 
+Performance and risk analysis
+3) Risk-adjusted return hypothesis: The risk-adjusted return (Sharpe ratio) is higher for CFD portfolios than for traditional portfolios.
+ 
+Performance and risk analysis
+4) Diversification hypothesis: The addition of CFDs leads to better risk diversification and reduces the overall risk of the portfolio despite the leverage effect.
+ 
+Behavior in times of crisis
+5) Crisis behavior hypothesis: Portfolios with CFDs react more strongly in times of crisis than traditional portfolios.
+
+
 | Script Name | Purpose | Description |
 |:---|:---|:---|
 | **01_classic_vs_cfd.ipynb** | Baseline Simulation | Compares traditional and CFD-enhanced portfolios under normal conditions. Tests basic return and risk differences. |
