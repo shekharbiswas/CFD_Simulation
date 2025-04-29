@@ -78,27 +78,28 @@ This project is structured based on the **TCCM** framework (Theory, Context, Cha
 
 
 <pre>
+
 cfd_portfolio_simulation/
 │
 ├── scripts/
-│   ├── 01_classic_vs_cfd.ipynb
-│   ├── 02_cfd_varied_leverage.ipynb
-│   ├── 03_cfd_crisis_simulation.ipynb
-│   ├── 04_cfd_sector_rotation.ipynb
-│   ├── 05_cfd_dynamic_risk_control.ipynb
-│   └── 06_cfd_vs_margin_trading.ipynb (optional)
+│   ├── 01_performance_analysis.ipynb             # Tests average return differences between CFD and traditional portfolios
+│   ├── 02_risk_analysis.ipynb                    # Analyzes portfolio volatility with and without CFDs
+│   ├── 03_sharpe_ratio_analysis.ipynb            # Compares risk-adjusted returns (Sharpe ratio)
+│   ├── 04_diversification_test.ipynb             # Evaluates diversification benefits of including CFDs
+│   ├── 05_crisis_response_simulation.ipynb       # Simulates behavior of portfolios in crisis periods
 │
 ├── data/
-│   └── raw_prices.csv (if you want to save data)
+│   └── raw_prices.csv                            # Optional: historical price data used in simulations
 │
 ├── src/
-│   ├── data_loader.py
-│   ├── portfolio_simulator.py
-│   ├── risk_metrics.py
+│   ├── data_loader.py                            # Loads and cleans historical market data
+│   ├── portfolio_simulator.py                    # Core logic for building and running portfolio simulations
+│   ├── risk_metrics.py                           # Functions to compute return, volatility, Sharpe, VaR, etc.
 │
 ├── README.md
 ├── requirements.txt
 └── .gitignore
+
 
 </pre>
 
