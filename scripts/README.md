@@ -85,7 +85,6 @@ Crisis behavior hypothesis: Portfolios with CFDs react more strongly in times of
 
 
 
-
 | Script Name | Purpose | Description |
 |:---|:---|:---|
 | **01_classic_vs_cfd.ipynb** | Baseline Simulation | Compares traditional and CFD-enhanced portfolios under normal conditions. Tests basic return and risk differences. |
