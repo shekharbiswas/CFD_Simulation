@@ -1,6 +1,4 @@
-# CFD Portfolio Simulation
-
-## Introduction
+# CFD portfolio simulation
 
 This project explores how Contracts for Difference (CFDs) can be strategically used to enhance or manage the performance and risk profile of investment portfolios.  
 CFDs are leveraged financial instruments that allow investors to speculate on price movements of assets without owning the underlying securities.  
