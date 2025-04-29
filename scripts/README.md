@@ -1,88 +1,81 @@
-# CFD Portfolio Simulation
+# Simulation Steps
 
 ## Overview
 
-This project analyzes how Contracts for Difference (CFDs) impact portfolio performance and risk.  
-It compares a traditional portfolio with a CFD-enhanced portfolio by using real historical data, applying leverage, and evaluating risk-return profiles.
+This notebook simulates and compares two types of investment portfolios:
 
-The project is built on a clear, structured framework to ensure every step — from hypothesis formulation to data-driven testing — is transparent and logical.
+- **Classic Portfolio**: A traditional portfolio with simple equal-weight allocation.
+- **CFD-Enhanced Portfolio**: A leveraged portfolio simulating the use of Contracts for Difference (CFDs).
 
-The main objectives are:
-- To assess whether CFDs can improve portfolio returns
-- To measure the impact of leverage on risk
-- To understand how portfolios behave under normal and crisis conditions
+The simulation is structured logically to follow clear hypotheses and uses standard financial risk and performance metrics.
 
----
 
-## What is a CFD?
-
-A **Contract for Difference (CFD)** is a financial contract where two parties exchange the difference between the entry and exit price of an asset, without owning the actual asset.
-
-Key features of CFDs:
-- **Leverage**: Control a larger position with a smaller amount of capital
-- **Flexibility**: Trade both rising and falling markets
-- **Higher risk**: Losses can be magnified as much as profits
-
-CFDs are popular tools among investors seeking quick market exposure or hedging opportunities, but they require careful risk management due to their leverage.
-
----
-
-## Simulation Approach
-
-This project follows a structured approach to ensure completeness and credibility:
+## Simulation Steps
 
 ### 1. Project Setup
-- Introduction to CFDs and portfolio leverage concepts
-- Formulation of clear hypotheses:
-  - H1: CFDs can improve portfolio returns
-  - H2: CFDs increase portfolio risk
-  - H3: CFDs can affect diversification behavior
+
+- **Objective**: Analyze how CFDs affect returns, risk, and diversification.
+- **Hypotheses Formulated**:
+  - H1: CFDs improve portfolio returns.
+  - H2: CFDs increase portfolio risk.
+  - H3: CFDs may affect diversification during crises.
+- **Framework Used**: TCCM (Theory, Context, Characteristics, Methods) to ensure structured evaluation.
 
 ### 2. Data Collection
-- Historical price data of major indices (e.g., S&P500, NASDAQ100) downloaded using real-world sources.
+
+- Historical daily price data for two major US indices is downloaded:
+  - **SPY** (S&P 500 ETF)
+  - **QQQ** (NASDAQ 100 ETF)
+- Data source: Yahoo Finance (`yfinance` library).
 
 ### 3. Portfolio Construction
-- **Classic Portfolio**: Simple allocation between two major indices without leverage.
-- **CFD-Enhanced Portfolio**: Applying leverage (e.g., 3x exposure) to simulate CFD behavior on selected assets.
+
+- **Classic Portfolio**:
+  - 50% SPY, 50% QQQ
+  - No leverage applied.
+
+- **CFD-Enhanced Portfolio**:
+  - 50% SPY, 50% leveraged QQQ (e.g., 3x leverage).
+  - Leverage simulates the effect of using CFDs.
 
 ### 4. Metrics Calculation
-For both portfolios, key financial metrics are calculated:
-- **Annualized Return**
-- **Annualized Volatility**
-- **Sharpe Ratio**
-- **Maximum Drawdown**
-- **Value at Risk (VaR 95%)**
-- **Expected Shortfall (Conditional VaR 95%)**
+
+Key risk and return metrics are calculated for both portfolios:
+
+- **Annualized Return**: Measures overall portfolio growth per year.
+- **Annualized Volatility**: Measures how much returns fluctuate.
+- **Sharpe Ratio**: Risk-adjusted performance (return vs. volatility).
+- **Maximum Drawdown**: Largest portfolio value loss during the period.
+- **Value at Risk (VaR 95%)**: Maximum expected loss at a 95% confidence level.
+- **Expected Shortfall (ES 95%)**: Average loss beyond the VaR threshold.
+
+All metrics are calculated using standard financial formulas and assumptions (252 trading days per year).
 
 ### 5. Results Visualization
-- Growth curves and drawdown charts comparing the two portfolios over time.
-- Risk-return tables to highlight the trade-offs introduced by CFDs.
+
+- **Portfolio Growth**: Line charts showing cumulative returns over time.
+- **Drawdown Analysis**: Visualization of portfolio drawdowns from historical peaks.
+- **Comparison Table**: Summary table comparing risk and performance metrics side-by-side.
 
 ### 6. Hypotheses Testing
-- Directly evaluate the formulated hypotheses by comparing portfolio performance and risk metrics.
 
----
+Each hypothesis is evaluated based on the results:
 
-## Project Structure and Framework (TCCM)
+- **H1**: Did the CFD-enhanced portfolio show higher returns?
+- **H2**: Did the CFD-enhanced portfolio show higher risk (volatility, drawdowns)?
+- **H3**: (Partially evaluated) Diversification effects considered for future expansion.
 
-| Category | Description |
-|:---|:---|
-| **Theory** | Modern Portfolio Theory, CAPM, risk-return trade-off theories, leverage impact. |
-| **Context** | Investment management under both normal and crisis market conditions. |
-| **Characteristics** | Comparison between traditional and CFD-leveraged portfolios based on standard risk and performance metrics. |
-| **Methods** | Quantitative simulation using Python, statistical risk analysis, real market data application. |
+A clear success/failure statement is printed for each hypothesis based on actual data.
 
-Each element ensures that the project is based on sound financial theory, realistic market scenarios, and systematic evaluation methods.
 
----
 
-## Why This Project is Valuable
+## Why This Simulation Matters
 
-- **Clear and focused**: Straightforward simulation of real-world portfolio management scenarios involving leveraged products.
-- **Data-driven**: Uses historical price data to ensure realistic performance simulation.
-- **Complete**: Covers return, risk, drawdowns, and tail-risk metrics for a full portfolio evaluation.
-- **Educational**: Demonstrates both the opportunities and dangers of using leverage via CFDs.
+- **Structured Approach**: Hypotheses-driven, not random testing.
+- **Real Data**: Ensures realistic performance behavior.
+- **Comprehensive Metrics**: Both return and risk sides are fully analyzed.
+- **Clarity**: Clear steps make it easy to understand, replicate, and expand.
 
-This project provides a practical, structured view into how CFDs can affect investment outcomes and risk management decisions.
+This simulation gives a practical, insightful look into how leveraged products like CFDs influence portfolio outcomes — helping investors make better-informed decisions.
 
----
+
