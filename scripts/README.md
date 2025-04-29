@@ -7,7 +7,7 @@ It is structured logically around clear hypotheses and financial metrics, offeri
 
 The simulations are built on a solid framework (TCCM: Theory, Context, Characteristics, Methods) and focus on both static comparisons and dynamic strategies.
 
----
+
 
 ## Simulation Steps
 
@@ -57,7 +57,7 @@ Each hypothesis is tested directly based on calculated results:
 
 A clear success/failure statement is printed for each hypothesis.
 
----
+
 
 ## Extended Simulations: Strategies and Scripts
 
@@ -74,7 +74,7 @@ In addition to the basic classic vs. CFD comparison, several advanced simulation
 
 Each script builds logically upon the last, adding complexity and reflecting real-world investment decisions with CFDs.
 
----
+
 
 ## Why This Simulation Approach Matters
 
@@ -86,4 +86,3 @@ Each script builds logically upon the last, adding complexity and reflecting rea
 
 This project provides a practical and robust view into how CFDs influence investment outcomes — demonstrating both their potential benefits and the significant risks they bring when leverage is involved.
 
----
