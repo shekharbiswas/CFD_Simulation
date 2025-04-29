@@ -59,40 +59,16 @@ A clear success/failure statement is printed for each hypothesis.
 
 
 
-## Extended Simulations: Strategies and Scripts
+### Hypotheses and Script Mapping
 
-In addition to the basic classic vs. CFD comparison, several advanced simulations are implemented to deepen the analysis:
+| Category                    | Hypothesis                                                                                                                          | Script Name                        |
+|----------------------------|-------------------------------------------------------------------------------------------------------------------------------------|------------------------------------|
+| Performance and risk analysis | 1) **Performance hypothesis**: The use of CFDs leads to a higher average portfolio return compared to a traditional portfolio without CFDs. | `01_performance_analysis.ipynb`    |
+| Performance and risk analysis | 2) **Risk hypothesis**: The use of CFDs increases the volatility of the portfolio compared to a traditional portfolio.                      | `02_risk_analysis.ipynb`           |
+| Performance and risk analysis | 3) **Risk-adjusted return hypothesis**: The risk-adjusted return (Sharpe ratio) is higher for CFD portfolios than for traditional portfolios. | `03_sharpe_ratio_analysis.ipynb`   |
+| Performance and risk analysis | 4) **Diversification hypothesis**: The addition of CFDs leads to better risk diversification and reduces the overall risk of the portfolio despite leverage. | `04_diversification_test.ipynb`    |
+| Behavior in times of crisis   | 5) **Crisis behavior hypothesis**: Portfolios with CFDs react more strongly in times of crisis than traditional portfolios.                  | `05_crisis_response_simulation.ipynb` |
 
-
-### Performance and risk analysis
-Performance hypothesis: The use of CFDs leads to a higher average portfolio return compared to a traditional portfolio without CFDs.
- 
-Performance and risk analysis
-### Risk hypothesis: The use of CFDs increases the volatility of the portfolio compared to a traditional portfolio.
- 
-Performance and risk analysis
-
-### Risk-adjusted return hypothesis: The risk-adjusted return (Sharpe ratio) is higher for CFD portfolios than for traditional portfolios.
- 
-Performance and risk analysis
-
-### Diversification hypothesis: The addition of CFDs leads to better risk diversification and reduces the overall risk of the portfolio despite the leverage effect.
- 
-### Behavior in times of crisis
-Crisis behavior hypothesis: Portfolios with CFDs react more strongly in times of crisis than traditional portfolios.
-
-
-
-
-
-| Script Name | Purpose | Description |
-|:---|:---|:---|
-| **01_classic_vs_cfd.ipynb** | Baseline Simulation | Compares traditional and CFD-enhanced portfolios under normal conditions. Tests basic return and risk differences. |
-| **02_cfd_varied_leverage.ipynb** | Leverage Sensitivity | Studies how different leverage levels (e.g., 2x, 3x, 5x) affect returns, volatility, and Sharpe Ratios. |
-| **03_cfd_crisis_simulation.ipynb** | Crisis Resilience | Injects simulated market crashes (-10% to -20%) and evaluates portfolio survival and recovery patterns. |
-| **04_cfd_sector_rotation.ipynb** | Tactical Allocation | Simulates using CFDs to rotate exposure between sectors (e.g., technology, energy) based on simple rules. |
-| **05_cfd_dynamic_risk_control.ipynb** | Smart Risk Management | Reduces CFD leverage dynamically when volatility rises, aiming to control extreme risks during crises. |
-| **06_cfd_vs_margin_trading.ipynb** (optional) | Product Comparison | Compares the behavior of CFDs against traditional margin trading — differences in risk and cost structure. |
 
 Each script builds logically upon the last, adding complexity and reflecting real-world investment decisions with CFDs.
 
