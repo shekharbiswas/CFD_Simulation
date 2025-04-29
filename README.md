@@ -2,8 +2,21 @@
 
 ## Introduction
 
-This project explores how Contracts for Difference (CFDs) can be used to enhance or manage the performance and risk of investment portfolios.  
-We simulate traditional portfolios and CFD-enhanced portfolios, focusing on risk-return metrics during normal and crisis periods.
+This project explores how Contracts for Difference (CFDs) can be strategically used to enhance or manage the performance and risk profile of investment portfolios.  
+CFDs are leveraged financial instruments that allow investors to speculate on price movements of assets without owning the underlying securities.  
+Due to their leverage effect, CFDs can potentially boost returns but also significantly increase risk, making them an attractive yet complex tool for modern portfolio management.
+
+We simulate two types of portfolios: a traditional investment portfolio composed of stocks and ETFs, and a CFD-enhanced portfolio that introduces leveraged positions via CFDs.  
+The goal is to assess how CFDs impact key financial metrics, including total return, volatility, Sharpe Ratio, Maximum Drawdown, Value at Risk (VaR), and Expected Shortfall (ES).
+
+The project applies various statistical and quantitative techniques:  
+- Portfolio simulations using historical price data
+- Risk metric calculations (mean, standard deviation, downside risk measures)
+- Crisis scenario modeling to mimic market crashes
+- Correlation and diversification analysis across assets
+- Comparative analysis between classic and leveraged portfolios.
+
+By combining financial theory with practical simulation techniques, this project provides insights into the opportunities and risks associated with CFDs, particularly during periods of high market volatility like the COVID-19 crash of 2020 or hypothetical future crises.
 
 
 ## What is a CFD?
