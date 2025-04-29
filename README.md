@@ -1,4 +1,4 @@
-# CFD Portfolio Simulation Project
+# CFD Portfolio Simulation
 
 ## Introduction
 
@@ -30,7 +30,6 @@ Portfolio managers use CFDs for several practical reasons:
 - **Leverage Management**: Enhance returns by carefully using leverage, especially in stable markets.
 - **Crisis Strategies**: During turbulent times, CFDs allow tactical shifts (e.g., shorting falling sectors) without major restructuring of the portfolio.
 
----
 
 ## Practical Use Cases of CFDs in Portfolio Management
 
