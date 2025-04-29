@@ -77,6 +77,31 @@ This project is structured based on the **TCCM** framework (Theory, Context, Cha
 | **Methods** | Quantitative simulation using Python, scenario modeling, risk metric calculation, and interactive visualization through a Streamlit app. |
 
 
+<pre>
+cfd_portfolio_simulation/
+│
+├── scripts/
+│   ├── 01_classic_vs_cfd.ipynb
+│   ├── 02_cfd_varied_leverage.ipynb
+│   ├── 03_cfd_crisis_simulation.ipynb
+│   ├── 04_cfd_sector_rotation.ipynb
+│   ├── 05_cfd_dynamic_risk_control.ipynb
+│   └── 06_cfd_vs_margin_trading.ipynb (optional)
+│
+├── data/
+│   └── raw_prices.csv (if you want to save data)
+│
+├── src/
+│   ├── data_loader.py
+│   ├── portfolio_simulator.py
+│   ├── risk_metrics.py
+│
+├── README.md
+├── requirements.txt
+└── .gitignore
+
+</pre>
+
 ## Techniques We Will Apply (High Level)
 
 - **Portfolio Simulation**: Generate return series for portfolios with and without CFDs.
