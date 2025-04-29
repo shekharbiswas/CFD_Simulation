@@ -95,6 +95,7 @@ Mastering CFDs can significantly widen the tactical options available in modern 
 - Risk management professionals
 - Anyone interested in learning about modern investing tools
 
-No deep prior knowledge about finance is required — this project builds understanding progressively.
+
+
 
 
