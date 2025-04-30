@@ -131,12 +131,12 @@ Key modeling considerations:
 
 ## 🧭 Project Framework (TCCM)
 
-| Element         | Description                                                                 |
-|-----------------|-----------------------------------------------------------------------------|
-| **Theory**       | Modern Portfolio Theory (Markowitz), CAPM, and Hull's hedging model        |
-| **Context**      | High-volatility markets like the COVID-19 crash (2020) and a 2025 scenario |
-| **Characteristics** | Comparison of classic vs CFD-enhanced portfolios under normal and crisis conditions |
-| **Methods**      | Python-based simulations, risk metric analysis, VIX-based dynamic hedging, crisis modeling, and interactive Streamlit dashboards |
+| Element           | Description                                                                                   |
+|-------------------|-----------------------------------------------------------------------------------------------|
+| **Theory**         | Practical finance principles: portfolio optimization, leverage mechanics, and risk hedging   |
+| **Context**        | High-volatility markets such as the COVID-19 crash (2020) and a modeled future crash (2025) |
+| **Characteristics**| Side-by-side simulation of traditional portfolios vs. CFD-enhanced portfolios                |
+| **Methods**        | Python-based simulation engine, VIX-triggered hedge logic, risk metric analysis, and Streamlit app for interaction |
 
 
 
@@ -169,4 +169,4 @@ Mastering CFDs as part of a disciplined, risk-managed strategy helps modern inve
 - **Boost returns** in flat or sideways markets
 - **Diversify smarter**, not just broader
 
-By combining academic finance with applied simulations, this project aims to bridge theory and practice for today's market environment.
+By combining real-world finance logic with simulation-based experimentation, this project bridges the gap between traditional portfolio construction and modern R&D for dynamic market environments.
