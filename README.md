@@ -1,8 +1,35 @@
-# CFD Portfolio Simulation
+## 📘 Project Introduction
 
-This project investigates how Contracts for Difference (CFDs) can be strategically integrated into modern investment portfolios to influence return, risk, and crisis resilience. CFDs are leveraged instruments that allow investors to speculate on price movements of underlying assets without actually owning them. While they can magnify gains, they also elevate risk — making them both powerful and complex tools in portfolio management.
+This project investigates how **Contracts for Difference (CFDs)** can be strategically integrated into modern investment portfolios to manage return, risk, and crisis resilience. 
+
+CFDs are **derivative instruments** that allow investors to speculate on asset price movements without actually owning the underlying security. This makes them extremely flexible — and extremely risky.
+
+In traditional investing, portfolio composition focuses on diversification, capital preservation, and long-term growth. However, during **periods of high market volatility**, traditional portfolios may not respond quickly or effectively enough to protect investor capital.
+
+CFDs, when used responsibly, can provide **flexibility, leverage, and tactical agility**. They enable both long and short exposure and can be deployed to hedge against downturns or exploit short-term market opportunities.
+
+This project compares a **classic stock/ETF portfolio** with a **CFD-enhanced portfolio** that includes leveraged and short CFD positions.
+
+Simulations are run across **stable markets and crisis scenarios** (like the COVID-19 crash of 2020), allowing us to evaluate real-world implications of using CFDs in portfolio design.
+
+We use historical price data to analyze key financial metrics such as:
+- Total Return & Volatility  
+- Sharpe Ratio (risk-adjusted return)  
+- Maximum Drawdown  
+- Value at Risk (VaR) and Expected Shortfall (ES)
+
+The project further applies **VIX-based hedging**, simulating CFD strategies that automatically trigger when market volatility exceeds defined thresholds.
+
+By combining **financial theory** with **quantitative simulation**, we test how CFDs influence portfolio behavior under stress and in normal conditions.
 
 ---
+
+### 🔍 Why It Matters
+
+- **Practical insight**: Helps portfolio managers and investors understand when and how to use CFDs safely.
+- **Risk education**: Quantifies how leverage affects portfolio drawdowns and returns.
+- **Crisis resilience**: Offers ideas for hedging and stabilizing portfolios in unpredictable markets.
+
 
 ## 🎯 Project Goals
 
