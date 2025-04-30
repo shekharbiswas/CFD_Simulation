@@ -22,7 +22,6 @@ The project further applies **VIX-based hedging**, simulating CFD strategies tha
 
 By combining **financial theory** with **quantitative simulation**, we test how CFDs influence portfolio behavior under stress and in normal conditions.
 
----
 
 ### 🔍 Why It Matters
 
@@ -56,7 +55,7 @@ A Contract for Difference is a derivative contract where traders exchange the di
 - **Two-way trading**, enabling long and short positions
 - **Higher risk and return**, due to amplified exposure
 
----
+
 
 ## 💼 Relevance for Portfolio Managers
 
@@ -115,7 +114,7 @@ Key modeling considerations:
 - **MOVE**: Treasury market volatility index — acknowledged but not actionable via CFDs
 - CFDs are applied dynamically for protection during volatility spikes
 
----
+
 
 ## 📉 Cost Assumptions
 
@@ -128,28 +127,25 @@ Key modeling considerations:
 | Currency Conversion   | ❌ Excluded                   |
 | Margin                | 10–50% depending on asset type|
 
----
+
 
 ## 🧭 Project Framework (TCCM)
 
-<pre>
-Element         Description
---------------- -----------------------------------------------------------
-Theory          Modern Portfolio Theory (Markowitz), CAPM, Hull's hedging model
-Context         High-volatility markets (COVID-19 crash 2020, hypothetical 2025 crash)
-Characteristics Simulation of classic vs CFD-enhanced portfolios, crisis response analysis
-Methods         Python simulations, risk metric computation, VIX-based hedging, 
-                Streamlit dashboard, scenario modeling
-</pre>
+| Element         | Description                                                                 |
+|-----------------|-----------------------------------------------------------------------------|
+| **Theory**       | Modern Portfolio Theory (Markowitz), CAPM, and Hull's hedging model        |
+| **Context**      | High-volatility markets like the COVID-19 crash (2020) and a 2025 scenario |
+| **Characteristics** | Comparison of classic vs CFD-enhanced portfolios under normal and crisis conditions |
+| **Methods**      | Python-based simulations, risk metric analysis, VIX-based dynamic hedging, crisis modeling, and interactive Streamlit dashboards |
 
----
+
 
 ## 🗂 Project Structure
+
 TBD
 
 
 
----
 
 
 
