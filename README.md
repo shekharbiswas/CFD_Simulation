@@ -79,6 +79,11 @@ cfd_portfolio_simulation/
 ├── requirements.txt
 └── README.md
 
+```
+
+<br>
+
+
 ### 🔍 Why It Matters
 
 - **Practical insight**: Helps portfolio managers and investors understand when and how to use CFDs safely.
