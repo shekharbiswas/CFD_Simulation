@@ -45,3 +45,14 @@ class FMPDataLoader:
     def save(self, df: pd.DataFrame, filename: str = "vix_sp500_data.csv"):
         df.to_csv(filename)
         print(f"Saved to {filename}")
+
+
+# Use your actual API key
+api_key = "xxxxxxxFGH7G6x2nxxxxxxxxxxxxxxxxxx"
+
+# Initialize and load data
+loader = FMPDataLoader(api_key)
+df = loader.load_vix_sp500()
+
+# Save to CSV
+loader.save(df)
