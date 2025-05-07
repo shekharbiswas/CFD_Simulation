@@ -33,14 +33,37 @@ A Contract for Difference is a derivative contract where traders exchange the di
 - **Two-way trading**, enabling long and short positions
 - **Higher risk and return**, due to amplified exposure
 
-## 🔍 Objectives
+## 📌 Objectives 
 
-- Evaluate return, volatility, and risk-adjusted performance (Sharpe Ratio).
-- Analyze Value at Risk (VaR), Expected Shortfall (ES), and Maximum Drawdown.
-- Simulate CFD trading cost effects based on real-world broker data (IG Markets).
-- Quantify hedging efficiency triggered by VIX-based signals.
-- Compare Model A (classic portfolio) and Model B (CFD-hedged portfolio).
-- Study behavior during crisis periods: COVID-19 (2020) and forecasted volatility (2025).
+1. **Compare performance** of two portfolio models:
+   - Model A: Traditional portfolio with 80% S&P 500 and 20% cash
+   - Model B: CFD-hedged portfolio with S&P 500 + short CFD positions triggered by VIX > 25
+
+2. **Evaluate portfolio risk and diversification** using:
+   - Volatility (standard deviation)
+   - Value at Risk (VaR)
+   - Expected Shortfall (ES)
+   - Sharpe Ratio
+   - Maximum Drawdown
+
+3. **Incorporate realistic CFD trading costs** based on IG Markets (2024), including:
+   - Spread variation by time of day
+   - Overnight financing charges based on SOFR
+   - Borrowing costs and margin requirements
+
+4. **Simulate behavior during market crises**, specifically:
+   - The COVID-19 crisis (2020)
+   - Projected market disruption in 2025 (modeled via VIX spikes)
+
+5. **Use the VIX index as a hedging trigger**, activating CFD shorts when VIX exceeds a threshold (e.g., VIX > 25)
+
+6. **Test hypotheses** regarding the effect of CFDs on:
+   - Average return
+   - Risk
+   - Risk-adjusted return
+   - Diversification
+   - Crisis-period behavior
+
 
 ## 📊 Key Metrics
 
