@@ -55,7 +55,7 @@ A Contract for Difference is a derivative contract where traders exchange the di
 
 ## Data 
 
-<img width="600" alt="image" src="https://github.com/user-attachments/assets/fcd2a83e-ba58-47ad-b2ab-aa955a7b04c7" />
+<img width="700" alt="image" src="https://github.com/user-attachments/assets/fcd2a83e-ba58-47ad-b2ab-aa955a7b04c7" />
 
 
 ## ⚙️ Technology Stack
