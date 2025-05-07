@@ -78,7 +78,13 @@ A Contract for Difference is a derivative contract where traders exchange the di
 
 ## Data 
 
-<img width="700" alt="image" src="https://github.com/user-attachments/assets/fcd2a83e-ba58-47ad-b2ab-aa955a7b04c7" />
+| **Data Source**               | **Ticker/Label** | **Used For**                                  |
+|------------------------------|------------------|------------------------------------------------|
+| S&P 500 Index Prices         | `^GSPC`          | Portfolio return, volatility, drawdown         |
+| VIX Index Levels             | `^VIX`           | Hedging trigger logic                          |
+| SOFR Rate (USD Overnight)    | `SOFR` (manual)  | CFD financing cost                             |
+| CFD Cost Parameters          | Static from IG   | Cost modeling and margin requirements          |
+
 
 
 ## ⚙️ Technology Stack
