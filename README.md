@@ -23,28 +23,6 @@ The project further applies **VIX-based hedging**, simulating CFD strategies tha
 By combining **financial theory** with **quantitative simulation**, we test how CFDs influence portfolio behavior under stress and in normal conditions.
 
 
-### 🔍 Why It Matters
-
-- **Practical insight**: Helps portfolio managers and investors understand when and how to use CFDs safely.
-- **Risk education**: Quantifies how leverage affects portfolio drawdowns and returns.
-- **Crisis resilience**: Offers ideas for hedging and stabilizing portfolios in unpredictable markets.
-
-
-## 🎯 Project Goals
-
-- Simulate two portfolios:
-  - A **traditional portfolio** using stocks and ETFs
-  - A **CFD-enhanced portfolio** introducing leveraged CFD positions
-- Evaluate performance across:
-  - Return and volatility
-  - Sharpe Ratio
-  - Maximum Drawdown
-  - Value at Risk (VaR) and Expected Shortfall (ES)
-  - Diversification
-- Model crisis responses (e.g., COVID-19 crash 2020, hypothetical 2025 event)
-- Assess hedging performance using CFDs and volatility indicators like the **VIX**
-
-
 
 ## 📘 What Are CFDs?
 
@@ -55,6 +33,78 @@ A Contract for Difference is a derivative contract where traders exchange the di
 - **Two-way trading**, enabling long and short positions
 - **Higher risk and return**, due to amplified exposure
 
+## 🔍 Objectives
+
+- Evaluate return, volatility, and risk-adjusted performance (Sharpe Ratio).
+- Analyze Value at Risk (VaR), Expected Shortfall (ES), and Maximum Drawdown.
+- Simulate CFD trading cost effects based on real-world broker data (IG Markets).
+- Quantify hedging efficiency triggered by VIX-based signals.
+- Compare Model A (classic portfolio) and Model B (CFD-hedged portfolio).
+- Study behavior during crisis periods: COVID-19 (2020) and forecasted volatility (2025).
+
+## 📊 Key Metrics
+
+- Return, Volatility (σ)
+- Sharpe Ratio
+- Value at Risk (VaR)
+- Expected Shortfall (ES)
+- Maximum Drawdown (MDD)
+- Correlation and diversification index
+- Hedge efficiency index
+
+## ⚙️ Technology Stack
+
+- Python 3.10+
+- Libraries: `pandas`, `numpy`, `matplotlib`, `scipy`, `yfinance`, `statsmodels`, `arch`, `scikit-learn`
+
+## 📁 Project Structure
+
+```bash
+cfd_portfolio_simulation/
+├── data/
+│   └── vix_sp500_data.csv
+├── scripts/
+│   ├── data_loader.py
+│   ├── portfolio_models.py
+│   ├── cfd_cost_model.py
+│   ├── risk_metrics.py
+│   ├── hedging_strategy.py
+│   ├── crisis_analysis.py
+│   └── simulate.py
+├── notebooks/
+│   └── exploratory_analysis.ipynb
+├── config/
+│   └── params.yaml
+├── run.py
+├── requirements.txt
+└── README.md
+
+### 🔍 Why It Matters
+
+- **Practical insight**: Helps portfolio managers and investors understand when and how to use CFDs safely.
+- **Risk education**: Quantifies how leverage affects portfolio drawdowns and returns.
+- **Crisis resilience**: Offers ideas for hedging and stabilizing portfolios in unpredictable markets.
+
+
+<br>
+
+
+## 📜 Script Breakdown and Logic
+
+| Script Name               | Purpose                                                                 |
+|---------------------------|-------------------------------------------------------------------------|
+| `data_loader.py`          | Fetches and preprocesses VIX, S&P 500, and other index data (FMP, yfinance). |
+| `portfolio_models.py`     | Defines Model A (classic) and Model B (CFD-based); calculates weights and returns. |
+| `cfd_cost_model.py`       | Calculates CFD costs including spread, margin, and overnight financing. |
+| `risk_metrics.py`         | Computes VaR, ES, Sharpe Ratio, Max Drawdown, volatility, and returns. |
+| `hedging_strategy.py`     | Implements VIX-based dynamic hedging using short CFD positions. |
+| `crisis_analysis.py`      | Isolates crisis periods (e.g., 2020, 2025) and compares model responses. |
+| `simulate.py`             | Runs simulations over the full 2019–2025 timeline and applies risk/cost metrics. |
+| `run.py`                  | Entry point to run the full pipeline with logging and config integration. |
+| `params.yaml`             | Contains configuration: thresholds, VIX cutoff, cost rates, portfolio size. |
+| `exploratory_analysis.ipynb` | Optional Jupyter notebook for plotting, preliminary data checks, and debugging. |
+
+<br>
 
 
 ## 💼 Relevance for Portfolio Managers
