@@ -60,7 +60,7 @@ A Contract for Difference is a derivative contract where traders exchange the di
 ## 📁 Project Structure
 
 ```bash
-cfd_portfolio_simulation/
+cfd_simulation/
 ├── data/
 │   └── vix_sp500_data.csv
 ├── scripts/
