@@ -1,10 +1,14 @@
+# data_loader.py
 import requests
 import pandas as pd
 from functools import wraps
 import time
+import os
 
 def log_and_time(func):
-    """Decorator to log and time any method."""
+    """
+    Decorator to log and time method execution.
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
         start = time.time()
@@ -42,17 +46,14 @@ class FMPDataLoader:
         df["SOFR"] = 0.015  # placeholder
         return df
 
-    def save(self, df: pd.DataFrame, filename: str = "vix_sp500_data.csv"):
+    def save(self, df: pd.DataFrame, filename: str = "data/vix_sp500_data.csv"):
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
         df.to_csv(filename)
         print(f"Saved to {filename}")
 
+if __name__ == "__main__":
+    API_KEY = "xxxxxxxxxxxxxFHG8u9k7xxxxxxxx"
 
-# Use your actual API key
-api_key = "xxxxxxxFGH7G6x2nxxxxxxxxxxxxxxxxxx"
-
-# Initialize and load data
-loader = FMPDataLoader(api_key)
-df = loader.load_vix_sp500()
-
-# Save to CSV
-loader.save(df)
+    loader = FMPDataLoader(API_KEY)
+    df = loader.load_vix_sp500()
+    loader.save(df)
