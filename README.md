@@ -41,27 +41,34 @@ The core objectives of this project are to:
 1.  **Compare Performance:** Simulate and contrast the performance of two distinct portfolio models:
     *   **Model A (Classic):** A traditional portfolio holding 80% in S&P 500 equities and 20% in cash.
     *   **Model B (CFD-Hedged):** A portfolio holding 80% S&P 500 equities, 20% initial cash, but which activates **short S&P 500 CFD positions** to hedge a portion (e.g., 50%) of the equity exposure when the VIX index exceeds a predefined threshold (e.g., VIX > 25).
+      
 2.  **Evaluate Risk & Diversification Impact:** Quantify how the CFD hedging strategy affects portfolio risk using standard metrics:
     *   Volatility (Standard Deviation)
     *   Value at Risk (VaR - 95th percentile potential loss)
     *   Expected Shortfall (ES - average loss beyond VaR)
     *   Sharpe Ratio (comparing return against risk)
     *   Maximum Drawdown (largest peak-to-valley loss)
+      
 3.  **Incorporate Realistic Costs:** Model the financial impact of using CFDs by including:
     *   Overnight financing charges/credits based on the SOFR benchmark rate plus/minus a broker fee.
     *   Specific borrowing costs associated with maintaining short CFD positions.
     *   Average spread costs incurred when closing CFD hedge positions.
     *   Tiered margin requirements based on position size, affecting available cash.
+      
 4.  **Simulate Crisis Behavior:** Analyze portfolio performance during specific historical and simulated high-stress periods:
     *   The COVID-19 market crash (approx. Feb-Apr 2020).
     *   A period of high VIX readings in the provided 2025 data (approx. Mar-May 2025).
+      
 5.  **Test VIX Trigger:** Utilize the VIX index as the explicit mechanism to activate and deactivate the short CFD hedges.
+   
 6.  **Test Hypotheses:** Evaluate predefined hypotheses regarding the expected effects of this CFD hedging strategy on:
     *   Average portfolio return.
     *   Overall portfolio risk (volatility).
     *   Risk-adjusted return (Sharpe Ratio).
     *   Diversification / Risk Reduction effectiveness.
     *   Portfolio behavior during crisis periods.
+
+<br>
 
 ## 📊 Key Metrics Used
 
