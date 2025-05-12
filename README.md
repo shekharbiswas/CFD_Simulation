@@ -95,24 +95,29 @@ A Contract for Difference is a derivative contract where traders exchange the di
 ## 📁 Project Structure
 
 ```bash
-cfd_simulation/
+
+cfd_hedging_analysis/
 ├── data/
-│   └── vix_sp500_data.csv
-├── scripts/
-│   ├── data_loader.py
-│   ├── portfolio_models.py
-│   ├── cfd_cost_model.py
-│   ├── risk_metrics.py
-│   ├── hedging_strategy.py
-│   ├── crisis_analysis.py
-│   └── simulate.py
-├── notebooks/
-│   └── exploratory_analysis.ipynb
+│   └── vix_sp500_data.csv      # Renamed for simplicity
 ├── config/
-│   └── params.yaml
-├── run.py
-├── requirements.txt
-└── README.md
+│   └── params.yaml             # Configuration file
+├── scripts/
+│   ├── __init__.py             # Makes 'scripts' a package
+│   ├── config_loader.py        # Loads YAML configuration
+│   ├── data_loader.py          # Loads and prepares data
+│   ├── cfd_cost_model.py       # Calculates CFD costs (margin, financing, etc.)
+│   ├── risk_metrics.py         # Calculates portfolio risk/performance metrics
+│   ├── hedging_strategy.py     # Defines the logic for when/how much to hedge
+│   ├── simulation_engine.py    # Runs the day-by-day portfolio simulation
+│   ├── analysis.py             # Performs analysis on simulation results
+│   └── plotting.py             # Generates plots
+│   └── utils.py                # Utility functions (optional, e.g., logging)
+├── notebooks/
+│   └── exploratory_analysis.ipynb # For initial data exploration (optional)
+├── app.py                      # The Streamlit application (imports from scripts)
+├── run.py                      # Command-line execution script
+├── requirements.txt            # Python dependencies
+└── README.md                   # Project documentation
 
 ```
 
