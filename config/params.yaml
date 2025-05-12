@@ -3,15 +3,25 @@ project_name: cfd_hedging_analysis
 initial_capital: 1000000.0
 equity_allocation: 0.80
 trading_days_per_year: 252
-# Using 360 for financing cost calculation as per source material
 days_in_year_financing: 360
 
 # --- Data ---
+# File to load FROM or save TO after fetching
 data_file: data/vix_sp500_data.csv
 date_column: date
-sp500_column: S&P500
-vix_column: VIX
-sofr_column: SOFR
+sp500_column: S&P500 # Column name AFTER potential fetch/rename
+vix_column: VIX     # Column name AFTER potential fetch/rename
+sofr_column: SOFR   # SOFR MUST exist in the data_file if not fetching SOFR separately
+
+# --- API Fetching (Optional - FMP) ---
+load_from_api: false             # Set to true to fetch data instead of loading data_file
+force_fetch: false               # If true, always fetch even if data_file exists
+api_key_env_var: "FMP_API_KEY"   # Name of environment variable holding the FMP API Key
+api_symbol_sp500: "^GSPC"        # Ticker for S&P 500 in FMP
+api_symbol_vix: "^VIX"           # Ticker for VIX in FMP
+api_start_date: "2018-12-01"     # Start date for API fetch (allow buffer)
+api_end_date: "2026-01-01"       # End date for API fetch (allow buffer)
+# Note: SOFR is NOT fetched by default here, it's read from data_file
 
 # --- Hedging Strategy ---
 vix_threshold: 25.0
