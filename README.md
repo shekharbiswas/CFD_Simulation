@@ -78,6 +78,8 @@ The core objectives of this project are to:
 *   **Expected Shortfall (ES):** Also known as Conditional VaR (CVaR), measures the expected loss *given* that the loss exceeds the VaR threshold. Provides insight into the severity of tail-risk events. Calculated historically.
 *   **Maximum Drawdown (MDD):** The largest percentage decline from a portfolio's peak value to a subsequent trough, indicating the worst-case loss experienced.
 
+<br>
+
 ## 📈 Data Used
 
 | Data Component          | Source/Ticker/Label             | Used For                                                     | Notes                                                                |
@@ -87,6 +89,8 @@ The core objectives of this project are to:
 | SOFR Rate (USD O/N)     | `SOFR` (CSV column)             | Benchmark rate for calculating CFD overnight financing costs | **Crucially loaded from the provided CSV file.** Not fetched from API. |
 | CFD Cost Parameters     | Static values in `params.yaml`  | Cost modeling (spread, financing fee, borrow rate)           | Based on IG Markets (2024) assumptions from source material.         |
 | CFD Margin Requirements | Tiered rates in `params.yaml` | Calculating margin cash needed, impacting available cash    | Based on IG Markets (2024) tiered structure.                       |
+
+<br>
 
 ## ⚙️ Technology Stack
 
@@ -100,6 +104,8 @@ The core objectives of this project are to:
     *   `python-dotenv`: Loading environment variables from `.env` files (for API keys).
     *   `streamlit`: Creating the interactive web application.
 *   **Optional Libraries (for `notebooks/` or extended analysis):** `scipy`, `statsmodels`, `arch`, `scikit-learn`.
+
+<br>
 
 ## 📁 Project Structure
 
@@ -131,6 +137,8 @@ cfd_simulation/
 
 </pre>
 
+<br>
+
 ## 📜 Script Breakdown and Logic
 
 | Script Name             | Purpose                                                                                                | Key Logic / Functionality                                                                                                                            |
@@ -148,6 +156,7 @@ cfd_simulation/
 | `app.py`                | Interactive web application entry point.                                                               | Uses Streamlit to provide UI controls (sliders, inputs), runs simulations/analysis on demand, and displays results/plots interactively.             |
 | `params.yaml`           | Central configuration file.                                                                            | Defines all adjustable parameters: file paths, tickers, thresholds, costs, allocations, API settings, etc.                                          |
 | `exploratory_analysis.ipynb` | Optional notebook.                                                                               | Space for initial data visualization, testing functions, or ad-hoc analysis outside the main scripts.                                                |
+<br>
 
 ## 💼 Relevance for Portfolio Managers & Investors
 
@@ -157,6 +166,8 @@ Understanding the practical implications of using CFDs defensively can be valuab
 *   **Tactical Flexibility:** CFDs allow for relatively quick implementation of short positions compared to other methods.
 *   **Cost-Benefit Analysis:** Quantifies the direct costs (financing, borrowing, spread) associated with this hedging strategy versus the potential benefit of reduced drawdowns.
 *   **Risk Awareness:** Highlights that even defensive strategies have trade-offs (lower overall returns) and are not foolproof (performance varies depending on crisis characteristics).
+
+<br>
 
 ## 🧪 Methodology
 
@@ -177,6 +188,8 @@ Understanding the practical implications of using CFDs defensively can be valuab
     *   Results are compared, and the hypotheses (`analysis.py`) are evaluated based on the calculated metrics.
 5.  **Visualization:** Key results are plotted using `plotting.py` (portfolio growth, VIX trigger, costs, contracts/margin).
 
+<br>
+
 ## 📈 Hypotheses Evaluated
 
 The simulation results are used to assess the following hypotheses:
@@ -188,6 +201,8 @@ The simulation results are used to assess the following hypotheses:
 | Sharpe Ratio     | **H3:** CFDs improve risk-adjusted returns                        | Possible if risk reduction is large  | Supported (Slightly)                    |
 | Diversification  | **H4:** CFDs enhance risk reduction despite inherent leverage | Expected (Lower MDD/Vol)             | Supported                               |
 | Crisis Response  | **H5:** CFD portfolios react more strongly (magnitude) to crises | Mixed (Depends on crisis)            | Mixed (Less in COVID, More in 2025)     |
+
+<br>
 
 ## 📉 CFD Cost Assumptions (Modeled)
 
@@ -202,6 +217,8 @@ Based on IG Markets (2024) information from source documents:
 | Commissions           | ❌ Excluded (Source indicated spread used instead for index CFDs).                    | Assume index CFD, not share CFD.                          |
 | Slippage              | ❌ Excluded (Difficult to model historically).                                          | Limitation of the simulation.                             |
 | Currency Conversion   | ❌ Excluded (Assumes USD base for portfolio and index).                               | Limitation.                                               |
+
+<br>
 
 ## 🗂 Setup and Usage
 
