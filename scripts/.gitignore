@@ -1,0 +1,8 @@
+# Environment variables
+.env
+
+# Others 
+venv/
+__pycache__/
+*.pyc
+outputs/ # Ignore saved plots/results if desired
