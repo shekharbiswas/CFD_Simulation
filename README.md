@@ -1,6 +1,4 @@
-# CFD Hedging Strategy Analysis - Full README
-
-## 📘 Project Introduction
+# CFD Hedging Strategy
 
 This project investigates how Contracts for Difference (CFDs) can be strategically integrated into modern investment portfolios to manage return, risk, and crisis resilience.
 
