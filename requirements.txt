@@ -1,0 +1,5 @@
+pandas>=1.3 # Use specific versions if needed
+numpy>=1.20
+matplotlib>=3.4
+streamlit>=1.10
+PyYAML>=5.4
