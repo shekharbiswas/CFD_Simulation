@@ -3,6 +3,15 @@ import pandas as pd
 import json
 import time
 
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
+
+# Now you can proceed to load config and access the key via os.environ
+from scripts.config_loader import load_config
+
 # Import project modules using relative paths or assuming PYTHONPATH is set
 from scripts.config_loader import load_config
 from scripts.data_loader import load_and_prepare_data
