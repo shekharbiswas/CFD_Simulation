@@ -4,7 +4,37 @@ import numpy as np
 import requests
 from functools import wraps
 import time
+import os
 
+
+
+class FMPDataLoader:
+    # ... (init, _fetch_single_symbol, fetch_sp500_vix) ...
+    pass 
+
+# In the main load_and_prepare_data function:
+@log_and_time
+def load_and_prepare_data(config):
+    # ... (other setup) ...
+
+    if should_fetch:
+        # ...
+        api_key_var = config.get('api_key_env_var')
+        api_key = None # Initialize api_key
+        if api_key_var:
+            api_key = os.environ.get(api_key_var) # Read from environment
+
+        if not api_key: # Check if key was actually found
+            raise ValueError(f"API key environment variable '{api_key_var}' not set or not found.")
+        # ... rest of fetch logic using the 'api_key' variable ...
+        try:
+            fmp_loader = FMPDataLoader(api_key=api_key, start=start_date, end=end_date)
+            # ... fetch, merge, save ...
+        except Exception as e:
+            # ... error handling ...
+    # ... (rest of function) ...
+    return df
+    
 # --- Decorator (from your original script) ---
 def log_and_time(func):
     """Decorator to log and time method execution."""
