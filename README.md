@@ -100,7 +100,7 @@ The core objectives of this project are to:
 
 The project follows a modular structure for better organization and maintainability:
 
-
+<pre>
 cfd_simulation/
 ├── data/ # Input data files
 │ └── vix_sp500_data.csv
@@ -124,7 +124,7 @@ cfd_simulation/
 ├── requirements.txt # Python dependencies
 └── README.md # This file
 
-
+</pre>
 
 ## 📜 Script Breakdown and Logic
 
