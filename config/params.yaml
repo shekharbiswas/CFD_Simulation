@@ -1,3 +1,9 @@
+# --- API Fetching (Optional - FMP) 
+load_from_api: false
+force_fetch: false
+api_key_env_var: "FMP_API_KEY"
+
+
 # --- General Parameters ---
 project_name: cfd_hedging_analysis
 initial_capital: 1000000.0
