@@ -1,3 +1,5 @@
+# hedging_strategy.py
+
 import numpy as np
 
 def get_hedge_action(vix_level, current_equity, current_price, is_currently_hedged, config):

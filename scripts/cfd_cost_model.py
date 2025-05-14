@@ -1,3 +1,5 @@
+# cfd_cost_model.py
+
 import numpy as np
 
 def calculate_margin(num_contracts, index_price, config):
