@@ -226,7 +226,7 @@ Based on IG Markets (2024) information from source documents:
 1.  **Clone Repository:**
     ```
     # (No bash commands here, assuming user clones manually)
-    # Navigate to the project directory: cfd_hedging_analysis/
+    # Navigate to the project directory: cfd_simulation/
     ```
 2.  **Create Environment (Recommended):**
     ```
@@ -241,7 +241,7 @@ Based on IG Markets (2024) information from source documents:
     ```
 4.  **Data File:** Place your `vix_sp500_data.csv` file inside the `data/` directory. It **must** contain columns for date, S&P 500 price, VIX level, and the SOFR rate.
 5.  **API Key (Optional, for Fetching):**
-    *   Create a `.env` file in the project root (`cfd_hedging_analysis/.env`).
+    *   Create a `.env` file in the project root (`cfd_simulation/.env`).
     *   Add your FMP API key to the `.env` file: `FMP_API_KEY="your_actual_key_here"`
     *   **Ensure `.env` is listed in your `.gitignore` file.**
     *   Alternatively, set the `FMP_API_KEY` environment variable in your system or terminal session before running.
