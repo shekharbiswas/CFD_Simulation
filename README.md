@@ -155,7 +155,6 @@ cfd_simulation/
 | `run.py`                | Command-line execution entry point.                                                                    | Orchestrates the workflow: load config -> load data -> run simulations -> run analysis -> display results -> generate plots.                           |
 | `app.py`                | Interactive web application entry point.                                                               | Uses Streamlit to provide UI controls (sliders, inputs), runs simulations/analysis on demand, and displays results/plots interactively.             |
 | `params.yaml`           | Central configuration file.                                                                            | Defines all adjustable parameters: file paths, tickers, thresholds, costs, allocations, API settings, etc.                                          |
-| `exploratory_analysis.ipynb` | Optional notebook.                                                                               | Space for initial data visualization, testing functions, or ad-hoc analysis outside the main scripts.                                                |
 <br>
 
 ## 💼 Relevance for Portfolio Managers & Investors
