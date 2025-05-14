@@ -251,7 +251,7 @@ Based on IG Markets (2024) information from source documents:
 
 #### Command-Line Execution
 
-*   Navigate to the project root directory (`cfd_hedging_analysis/`) in your terminal.
+*   Navigate to the project root directory (`cfd_simulation/`) in your terminal.
 *   To run the analysis using the settings in `params.yaml`:
     ```
     python run.py
@@ -260,7 +260,7 @@ Based on IG Markets (2024) information from source documents:
 
 #### Interactive Web Application (Streamlit)
 
-*   Navigate to the project root directory (`cfd_hedging_analysis/`) in your terminal.
+*   Navigate to the project root directory (`cfd_simulation/`) in your terminal.
 *   Launch the Streamlit app:
     ```
     streamlit run app.py
