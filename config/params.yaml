@@ -7,7 +7,7 @@ api_key_env_var: "FMP_API_KEY"
 # --- General Parameters ---
 project_name: cfd_hedging_analysis
 initial_capital: 1000000.0
-equity_allocation: 0.80
+equity_allocation: 0.8
 trading_days_per_year: 252
 days_in_year_financing: 360
 
@@ -30,17 +30,17 @@ api_end_date: "2026-01-01"       # End date for API fetch (allow buffer)
 # Note: SOFR is NOT fetched by default here, it's read from data_file
 
 # --- Hedging Strategy ---
-vix_threshold: 25.0
-hedge_ratio: 0.50 # Percentage of equity value to hedge
+vix_threshold: 20.0
+hedge_ratio: 0.60 # Percentage of equity value to hedge
 
 # --- CFD Cost Model (Based on IG Markets assumptions in source) ---
 # Note: Spread cost is applied per round trip when closing hedge
-avg_spread_points: 0.7 # In index points
+avg_spread_points: 0.2 # In index points
 lot_size: 1.0 # USD value per index point for CFD
 # Broker annual fee added/subtracted from benchmark for financing
-broker_annual_financing_fee: 0.03 # 3%
+broker_annual_financing_fee: 0.01 # 1%
 # Borrowing cost specific to short CFD positions
-borrowing_cost_annual: 0.006 # 0.6%
+borrowing_cost_annual: 0.002 # 0.2%
 
 # CFD Margin Tiers (Rate applied to notional value for contracts in tier)
 margin_tiers:

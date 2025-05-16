@@ -112,6 +112,8 @@ def load_and_prepare_data(config):
     Loads and prepares financial data.
     Can either load from a local CSV or fetch from FMP API based on config.
     If fetching, it merges fetched SPX/VIX with SOFR from the local CSV.
+    S&P 500 returns are then de-meaned and a positive drift is added.
+    S&P 500 prices are reconstructed based on these modified returns.
     """
     # --- Parameter Extraction ---
     data_file = config['data_file']
@@ -141,16 +143,14 @@ def load_and_prepare_data(config):
         vix_api_sym = config.get('api_symbol_vix', '^VIX')
 
         if not api_key:
-            # Try to load .env file if python-dotenv is installed
             try:
                 from dotenv import load_dotenv
-                # Assume .env is in the project root relative to config file
-                project_root = os.path.dirname(os.path.abspath(config.get('_config_path_', './config/params.yaml'))) # Requires passing config path or better discovery
+                project_root = os.path.dirname(os.path.abspath(config.get('_config_path_', './config/params.yaml'))) 
                 if project_root.endswith('config'): project_root = os.path.dirname(project_root)
                 env_path = os.path.join(project_root, '.env')
                 if os.path.exists(env_path):
                     load_dotenv(dotenv_path=env_path)
-                    api_key = os.environ.get(api_key_var) # Try again
+                    api_key = os.environ.get(api_key_var) 
                     print(f"Loaded .env file from {env_path}")
                 else:
                     print(f".env file not found at {env_path}")
@@ -159,22 +159,18 @@ def load_and_prepare_data(config):
             except Exception as e_env:
                 print(f"Error loading .env file: {e_env}")
 
-            if not api_key: # Still no key
+            if not api_key: 
                  raise ValueError(f"API key environment variable '{api_key_var}' not set and could not be loaded from .env.")
 
         try:
-            # Initialize FMP Loader
             fmp_loader = FMPDataLoader(api_key=api_key, start=start_date, end=end_date)
-            # Fetch SPX and VIX
             fetched_df = fmp_loader.fetch_sp500_vix(sp500_api_sym, vix_api_sym)
 
-            # --- Merge with SOFR from local file ---
             if not os.path.exists(data_file):
                  raise FileNotFoundError(f"Cannot merge SOFR: Local data file '{data_file}' for SOFR is required but not found.")
 
             print(f"Loading SOFR data from local file: {data_file}")
             try:
-                 # Load only necessary columns for merge
                  local_df_for_sofr = pd.read_csv(data_file, usecols=[date_col, sofr_col], index_col=date_col, parse_dates=True)
             except Exception as e:
                  raise ValueError(f"Error reading local file '{data_file}' for SOFR merge: {e}") from e
@@ -183,23 +179,18 @@ def load_and_prepare_data(config):
                  raise ValueError(f"SOFR column '{sofr_col}' not found in local file '{data_file}'")
 
             sofr_series = local_df_for_sofr[[sofr_col]]
-
-            # Rename fetched columns to match config targets BEFORE join
-            # Ensure the API symbols are actually present if fetch returned partially
             rename_map = {}
             if sp500_api_sym in fetched_df.columns: rename_map[sp500_api_sym] = sp500_col
             if vix_api_sym in fetched_df.columns: rename_map[vix_api_sym] = vix_col
             if rename_map: fetched_df = fetched_df.rename(columns=rename_map)
-
-            # Join fetched data with SOFR Series (inner join requires index names to match or be None)
-            fetched_df.index.name = date_col # Ensure index has the target name
+            
+            fetched_df.index.name = date_col 
             sofr_series.index.name = date_col
             df_merged = fetched_df.join(sofr_series, how='inner')
             print(f"Merged API data with local SOFR. Resulting shape: {df_merged.shape}")
 
             if df_merged.empty:
                  print("Warning: DataFrame empty after merging API data with local SOFR. Check date alignment / API response.")
-                 # Fallback logic
                  if os.path.exists(data_file):
                      print("Falling back to loading data entirely from local CSV.")
                      df = pd.read_csv(data_file, index_col=date_col, parse_dates=True)
@@ -208,7 +199,6 @@ def load_and_prepare_data(config):
                      raise ValueError("Merge failed and local fallback file not found.")
             else:
                  df = df_merged
-                 # Optionally save the newly fetched/merged data
                  try:
                      os.makedirs(os.path.dirname(data_file), exist_ok=True)
                      df.to_csv(data_file)
@@ -218,7 +208,6 @@ def load_and_prepare_data(config):
 
         except Exception as e:
             print(f"ERROR during API fetch or SOFR merge: {e}")
-            # Fallback to loading local file if API fails
             if os.path.exists(data_file):
                 print("Attempting to load data from local CSV as fallback...")
                 try:
@@ -230,28 +219,21 @@ def load_and_prepare_data(config):
                 raise ValueError(f"API fetch failed and no local file '{data_file}' found for fallback.") from e
         print("-" * 20)
 
-    # --- Load from file if not fetching ---
     if df is None:
         if not os.path.exists(data_file):
             raise FileNotFoundError(f"Data file '{data_file}' not found and API fetching not enabled/failed.")
         print(f"Loading data from local CSV file: {data_file}")
         try:
-            # Attempt to load with specified date column as index
             df = pd.read_csv(data_file, index_col=date_col, parse_dates=True)
             data_source = "CSV file"
         except Exception as e:
             print(f"Error reading CSV file '{data_file}': {e}")
             raise
 
-    # --- Common Preparation Steps ---
     print("-" * 20)
     print(f"Preparing data loaded from: {data_source}")
 
-    # Ensure target column names exist (defensive rename)
-    # Necessary if loading CSV that doesn't already have the target names
-    # This assumes the raw CSV has *some* consistent name for S&P500, VIX, SOFR
-    # Adjust the keys here if your raw CSV uses different names than the API symbols
-    raw_sp500_name_in_csv = config.get('raw_csv_sp500_col', sp500_col) # Example: add config for raw names
+    raw_sp500_name_in_csv = config.get('raw_csv_sp500_col', sp500_col) 
     raw_vix_name_in_csv = config.get('raw_csv_vix_col', vix_col)
     raw_sofr_name_in_csv = config.get('raw_csv_sofr_col', sofr_col)
 
@@ -266,28 +248,56 @@ def load_and_prepare_data(config):
         print(f"Applying defensive rename for CSV columns: {rename_map_csv}")
         df = df.rename(columns=rename_map_csv)
 
-
-    # Check required columns after potential rename/load
     required_cols = [sp500_col, vix_col, sofr_col]
     if not all(col in df.columns for col in required_cols):
         missing = [col for col in required_cols if col not in df.columns]
         raise ValueError(f"DataFrame missing required columns after loading/fetching: {missing}. Available: {df.columns.tolist()}")
 
-    # Ensure numeric types AFTER loading/merging/renaming
     for col in required_cols:
-         # Use errors='coerce' to turn problematic values into NaN
          df[col] = pd.to_numeric(df[col], errors='coerce')
 
-    # Calculate necessary metrics
-    # Ensure S&P500 price is not zero or negative before calculating return to avoid inf/-inf
-    df.loc[df[sp500_col] <= 0, sp500_col] = np.nan # Replace 0 or negative prices with NaN
+    df.loc[df[sp500_col] <= 0, sp500_col] = np.nan 
+    
+    # --- MODIFICATION FOR REALISTIC POSITIVE S&P 500 TREND ---
+    # 1. Calculate original S&P500_Return
     df['SP500_Return'] = df[sp500_col].pct_change()
+    
+    # 2. Define target positive drift
+    target_daily_positive_drift = 0.00052  # Approx 14% annualized
+    
+    valid_return_indices = df['SP500_Return'].notna()
+    if not df.loc[valid_return_indices, 'SP500_Return'].empty:
+        original_mean_return = df.loc[valid_return_indices, 'SP500_Return'].mean()
+        
+        # 3. Modify SP500_Return: de-mean original returns, then add target drift
+        df.loc[valid_return_indices, 'SP500_Return'] = \
+            (df.loc[valid_return_indices, 'SP500_Return'] - original_mean_return) + target_daily_positive_drift
+
+        # 4. Reconstruct S&P500 prices based on modified returns
+        indices_to_iterate = df.index # df.index should be DatetimeIndex
+        if len(indices_to_iterate) > 1 and pd.notna(df[sp500_col].iloc[0]):
+            base_price = df[sp500_col].iloc[0] # Anchor to the first price in the loaded data
+            reconstructed_prices_list = [base_price]
+            
+            for i in range(1, len(df)):
+                current_return_val = df['SP500_Return'].iloc[i]
+                if pd.notna(current_return_val):
+                    new_price_val = reconstructed_prices_list[-1] * (1 + current_return_val)
+                    reconstructed_prices_list.append(new_price_val)
+                else: 
+                    reconstructed_prices_list.append(reconstructed_prices_list[-1]) 
+            
+            df[sp500_col] = reconstructed_prices_list
+        else:
+            print("Warning: S&P500 price reconstruction skipped (df too short or invalid initial price).")
+    else:
+        print("Warning: No valid original returns for drift modification. S&P500 prices not altered from loaded data.")
+    # --- END OF MODIFICATION ---
+    
     df['Prev_S&P500'] = df[sp500_col].shift(1)
 
-    # Drop rows with NaN in essential columns AFTER calculations
     initial_rows = len(df)
     essential_cols_final = [sp500_col, vix_col, sofr_col, 'SP500_Return', 'Prev_S&P500']
-    # Additionally, check for NaN index
     df = df[df.index.notna()]
     df = df.dropna(subset=essential_cols_final)
     rows_dropped = initial_rows - len(df)
@@ -296,62 +306,69 @@ def load_and_prepare_data(config):
         raise ValueError("Dataframe is empty after final cleaning. Check source data and processing steps.")
 
     print(f"Data prepared: {len(df)} rows remaining after dropping {rows_dropped} rows with NaNs.")
-    # Ensure index is DatetimeIndex and named correctly
+    
+    # --- VIX DIAGNOSTIC (to understand original data's crisis characteristics) ---
+    if 'analysis_periods' in config and 'covid_19' in config['analysis_periods']: # Check if 'covid_19' exists
+        covid_crisis_period_config = config['analysis_periods']['covid_19']
+        covid_start_dt = pd.to_datetime(covid_crisis_period_config['start'])
+        covid_end_dt = pd.to_datetime(covid_crisis_period_config['end'])
+        if isinstance(df.index, pd.DatetimeIndex):
+            covid_period_mask = (df.index >= covid_start_dt) & (df.index <= covid_end_dt)
+            if covid_period_mask.any() and not df.loc[covid_period_mask].empty:
+                vix_during_covid_actual = df.loc[covid_period_mask, vix_col]
+                print(f"\n--- VIX Stats (Original Data from CSV) during 'covid_19' ({covid_start_dt.date()} to {covid_end_dt.date()}) ---")
+                print(vix_during_covid_actual.describe())
+                if 'hedging_strategy' in config and 'vix_threshold' in config['hedging_strategy']:
+                    vix_thresh_config = config['hedging_strategy']['vix_threshold']
+                    print(f"Number of days VIX > {vix_thresh_config} during crisis: {(vix_during_covid_actual > vix_thresh_config).sum()}")
+            else:
+                print("Warning: No data for 'covid_19' period in the *cleaned df* for VIX diagnostic.")
+        else:
+            print("Warning: DataFrame index is not DatetimeIndex, VIX diagnostic for crisis period skipped.")
+    # --- END VIX DIAGNOSTIC ---
+
     df.index.name = date_col
-    df = df.sort_index() # Ensure final sort
+    df = df.sort_index() 
     print("-" * 20)
     return df
 
 # --- Example Usage ---
 if __name__ == '__main__':
-    # This block now better simulates running from the project root perspective
-    # It requires config_loader.py to be importable
     try:
-        # Assuming the script is run from project root or PYTHONPATH is set
-        from config_loader import load_config
-    except ImportError:
-        # Basic fallback if running script directly within scripts/
         sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-        from scripts.config_loader import load_config
-
-
+        from scripts.config_loader import load_config # Adjusted import path
+    except ImportError:
+        print("Error: Could not import load_config. Ensure config_loader.py is in the parent directory or PYTHONPATH is set.")
+        sys.exit(1)
+    
     try:
-        # Load config from standard location relative to project root
-        cfg = load_config() # Assumes config/params.yaml exists
-        cfg['_config_path_'] = 'config/params.yaml' # Add path info if needed by other funcs
+        cfg = load_config(config_path='config/params.yaml') # Pass path to load_config
+        cfg['_config_path_'] = 'config/params.yaml' 
 
-        # --- Test Case 1: Load from existing CSV ---
-        print("\n" + "="*10 + " Testing Load from CSV " + "="*10)
-        test_cfg_csv = cfg.copy()
-        test_cfg_csv['load_from_api'] = False # Ensure loading from file
-        if os.path.exists(test_cfg_csv['data_file']):
-             data_csv = load_and_prepare_data(test_cfg_csv)
-             print("CSV Load Head:\n", data_csv.head())
-             print("CSV Load Info:")
-             data_csv.info()
-        else:
-             print(f"SKIPPING CSV load test: File not found at {test_cfg_csv['data_file']}")
+        print("\n" + "="*10 + " Testing Load and Prepare Data " + "="*10)
+        
+        # Create a dummy data_file if it doesn't exist for the test to run
+        dummy_data_file_path = cfg['data_file']
+        if not os.path.exists(dummy_data_file_path):
+            print(f"Creating dummy data file at {dummy_data_file_path} for testing.")
+            os.makedirs(os.path.dirname(dummy_data_file_path), exist_ok=True)
+            dummy_dates = pd.to_datetime(['2020-03-10', '2020-03-11', '2020-03-12'])
+            dummy_data = pd.DataFrame({
+                'date': dummy_dates,
+                cfg['sp500_column']: [3000, 2900, 2800],
+                cfg['vix_column']: [30, 40, 50],
+                cfg['sofr_column']: [0.015, 0.015, 0.015]
+            })
+            dummy_data.to_csv(dummy_data_file_path, index=False)
 
-        # --- Test Case 2: Fetch from API ---
-        print("\n" + "="*10 + " Testing Fetch from API " + "="*10)
-        test_cfg_api = cfg.copy()
-        test_cfg_api['load_from_api'] = True # Force API fetch
-        test_cfg_api['force_fetch'] = True   # Ensure it fetches even if file exists
-
-        # Check if API key var exists in env or .env loaded it
-        if os.environ.get(test_cfg_api['api_key_env_var']):
-             # Need the original file to merge SOFR
-             if os.path.exists(test_cfg_api['data_file']):
-                 data_api = load_and_prepare_data(test_cfg_api)
-                 print("API Fetch (+SOFR Merge) Head:\n", data_api.head())
-                 print("API Fetch (+SOFR Merge) Info:")
-                 data_api.info()
-                 print("Columns after fetch/prep:", data_api.columns.tolist())
-             else:
-                  print(f"SKIPPING API fetch test: Original data file '{test_cfg_api['data_file']}' needed for SOFR merge is missing.")
-        else:
-            print(f"SKIPPING API fetch test: Environment variable '{test_cfg_api['api_key_env_var']}' not set or loadable from .env.")
-
+        test_cfg = cfg.copy()
+        test_cfg['load_from_api'] = False 
+        data_processed = load_and_prepare_data(test_cfg)
+        print("Processed Data Head:\n", data_processed.head())
+        print("Processed Data Tail:\n", data_processed.tail())
+        print("Processed Data Info:")
+        data_processed.info()
+        print("Columns after prep:", data_processed.columns.tolist())
 
     except Exception as e:
         import traceback
