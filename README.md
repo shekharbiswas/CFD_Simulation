@@ -287,3 +287,5 @@ While CFDs carry significant risks, especially when used speculatively with high
 *   **Strategy Limitations:** Demonstrating that effectiveness can vary significantly depending on market conditions (e.g., COVID vs. 2025 scenario).
 
 By simulating this specific strategy with realistic costs, the project offers insights into the practical trade-offs involved in incorporating such tools into portfolio management.
+
+[CFD_app](https://github.com/shekharbiswas/CFD_app)
