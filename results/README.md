@@ -75,7 +75,7 @@ The following steps and derived parameters are set up after the initial configur
 *   **Simulation Period Confirmation:** The script prints the start and end dates of the simulation period covered by `df_sim` and the total number of simulation days.
 
 
-<img width="800" alt="image" src="https://github.com/user-attachments/assets/26dba559-076d-42ff-adf4-970de254c520" />
+<img width="1024" alt="image" src="https://github.com/user-attachments/assets/26dba559-076d-42ff-adf4-970de254c520" />
 
 
 
