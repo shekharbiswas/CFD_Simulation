@@ -133,3 +133,67 @@ To implement this VIX momentum strategy, several new features were engineered an
     *   **Meaning:** This provides an alternative condition to cover the short hedge. Regardless of recent momentum, if the VIX level itself drops below a certain "calm" threshold (e.g., 20), it's considered a signal that the heightened risk period has passed, and the hedge can be removed.
 
 By combining these engineered features, the strategy aims to dynamically adjust the portfolio's market exposure, hedging against potential downturns signaled by rising VIX momentum and removing those hedges when volatility subsides.
+
+
+<img width="1024" alt="image" src="https://github.com/user-attachments/assets/9e9beb9b-8c6d-4f85-8153-d00c077e7890" />
+
+
+## Full Period Performance Analysis: Model A (Classic) vs. Model B (VIX Momentum Hedge)
+
+This section analyzes the overall performance of the two simulated portfolios – Model A (a classic, static 80/20 equity/cash allocation) and Model B (an 80/20 base allocation with a dynamic VIX momentum-based CFD hedge at a 0.70 hedge ratio) – over the entire simulation period from early 2019 to mid-2025. The evaluation considers both the quantitative metrics presented in the table and the visual representation of portfolio growth in the "Simplified Portfolio Performance" chart.
+
+**Key Performance Metrics Overview:**
+
+| Metric                  | A (Classic) | B (Momentum HR:0.70) | Interpretation of B vs. A                                   |
+| :---------------------- | :---------- | :--------------------- | :-------------------------------------------------------- |
+| **Total Return**        | 1.0097      | 1.1834                 | **Higher:** Model B achieved a significantly greater total growth. |
+| **Annualized Return**   | 0.1158      | 0.1304                 | **Higher:** Model B delivered a better annualized return.        |
+| **Annualized Volatility**| 0.1648      | 0.1892                 | **Higher:** Model B exhibited more price fluctuation.        |
+| **Sharpe Ratio**        | 0.5504      | 0.5566                 | **Slightly Higher:** Model B offered marginally better risk-adjusted returns per unit of total volatility. |
+| **Max Drawdown**        | -0.2784     | -0.2821                | **Slightly Worse:** Model B experienced a slightly deeper maximum loss. |
+| **Calmar Ratio**        | 0.4160      | 0.4624                 | **Higher:** Model B showed better returns relative to its max drawdown. |
+| **Sortino Ratio**       | 0.7706      | 0.8642                 | **Higher:** Model B provided better returns per unit of downside risk. |
+| Daily VaR 95%           | -0.0147     | -0.0149                | Similar: Potential worst-day loss at 95% confidence is comparable. |
+| Daily CVaR 95%          | -0.0249     | -0.0261                | Similar: Expected loss on worst 5% of days is comparable, slightly higher for B. |
+| Omega Ratio             | 1.1222      | 1.1390                 | Slightly Higher: Model B had a marginally better probability-weighted gain/loss ratio. |
+| Skewness                | -0.3409     | 3.4874                 | **Significantly Different:** Model B shows strong positive skewness (more frequent small losses, few large gains), while A is slightly negatively skewed. |
+| Kurtosis                | 13.9773     | 77.2671                | **Significantly Higher (Fat Tails):** Model B has much higher kurtosis, indicating more extreme outcomes (both positive and negative) compared to a normal distribution. |
+| Best Day                | 0.0761      | 0.2186                 | **Much Higher:** Model B had a significantly better best single-day performance. |
+| Worst Day               | -0.0959     | -0.0959                | **Identical:** Both models shared the same worst single-day loss. |
+| Win Rate %              | 54.8287     | 54.6417                | Similar: Proportion of winning days is nearly identical.    |
+| Average Win %           | 0.6621      | 0.6941                 | Slightly Higher: Model B's average gain on winning days was slightly better. |
+| Average Loss %          | -0.6954     | -0.7136                | Slightly Worse: Model B's average loss on losing days was slightly larger. |
+| Profit Factor           | 1.1557      | 1.1718                 | Slightly Higher: Model B's gross profits were slightly higher relative to gross losses. |
+| **Recovery Factor**     | 3.6268      | 4.1952                 | **Higher:** Model B demonstrated a better ability to recover from its maximum drawdown relative to its total profit. |
+
+**Visual Performance (from the Chart):**
+
+The "Simplified Portfolio Performance" chart visually corroborates many of the metric findings:
+
+*   **Overall Growth:** The red line (Model B) consistently tracks above the blue line (Model A) for the majority of the period, especially after the initial COVID-19 recovery, indicating superior overall wealth generation.
+*   **COVID-19 Crisis (Early 2020):** Both portfolios experience a sharp dip. Model B appears to dip slightly more or similarly to Model A initially but then recovers much more rapidly and strongly, diverging significantly upwards. This suggests the VIX momentum hedge, while perhaps not preventing the initial shock perfectly, may have allowed for a more aggressive or better-timed re-entry or benefited from the subsequent market rebound when the hedge was lifted.
+*   **Volatility:** The red line (Model B) shows more pronounced peaks and troughs (greater oscillation) compared to the smoother blue line (Model A), visually confirming its higher annualized volatility.
+*   **Periods of Underperformance/Choppiness for Model B:** There are periods (e.g., parts of 2022-2023) where Model B's growth flattens or even slightly underperforms Model A before resuming its outperformance. This could be due to the costs of hedging (CFD fees, spread costs) or "whipsaw" effects if the VIX signals trigger hedges that don't align with subsequent market moves.
+*   **Recent Performance (2024-2025):** Model B continues to maintain its lead over Model A, though both show an upward trend.
+
+**Interpretation and Key Insights:**
+
+1.  **Higher Returns at the Cost of Higher Volatility:** Model B (VIX Momentum Hedge) achieved higher Total and Annualized Returns compared to the classic Model A. However, this came with increased Annualized Volatility. The hedging strategy, while aiming to protect during downturns, also introduces its own dynamics that can increase short-term price swings.
+
+2.  **Risk-Adjusted Performance:**
+    *   The Sharpe Ratio is marginally better for Model B, suggesting that the increased return slightly compensated for the increased total volatility.
+    *   Crucially, the Sortino Ratio and Calmar Ratio are notably better for Model B. This indicates that Model B was more efficient in generating returns relative to its downside risk (Sortino) and its maximum drawdown (Calmar). This is a key strength, suggesting the hedge was effective in managing specific types of risk, even if overall volatility increased.
+
+3.  **Drawdown Management:** While Model B's Max Drawdown was slightly worse than Model A's, its significantly higher Calmar Ratio and Recovery Factor suggest that it recovered more effectively from this drawdown. The chart strongly supports the idea of a quicker, more robust recovery post-COVID for Model B.
+
+4.  **Distributional Characteristics (Skewness and Kurtosis):**
+    *   The dramatically positive skewness (3.4874) for Model B is very interesting. It implies that while Model B might have frequent small losses (or smaller gains), it also experienced some significantly large positive returns (as seen in "Best Day" performance: 21.86% for B vs 7.61% for A). This pattern is often desirable if the large positive outliers significantly contribute to overall returns.
+    *   The very high kurtosis (77.26) for Model B indicates "fat tails" – a higher probability of extreme outcomes (both good and bad) compared to a normal distribution. This aligns with the higher "Best Day" return but also the slightly higher CVaR.
+
+5.  **Effectiveness of the VIX Momentum Hedge:**
+    *   The strategy appears to have been particularly beneficial during and after the COVID-19 crisis, as evidenced by the chart's visual recovery and the better Calmar/Recovery Factors.
+    *   The costs associated with CFD hedging (broker fees, spreads) and the potential for the hedge to be active during market upswings (if VIX remained elevated) likely contributed to the increased volatility and periods of choppiness for Model B.
+
+**Conclusion:**
+
+Over the full simulation period, Model B, with its VIX momentum-based CFD hedging strategy, generally outperformed the classic Model A in terms of overall and annualized returns. While it exhibited higher total volatility, its risk-adjusted metrics (particularly Sortino and Calmar Ratios) were superior, suggesting effective management of downside risk and a better recovery profile. The positive skewness and high "Best Day" return indicate that the strategy, when conditions were favorable (perhaps during high volatility exits or hedge removals), captured significant upside. The primary trade-off was the increased day-to-day price fluctuation and a marginally worse maximum drawdown, though its recovery from that drawdown was stronger. The performance during the COVID-19 period, as seen in the chart, highlights a key strength of Model B's dynamic approach.
