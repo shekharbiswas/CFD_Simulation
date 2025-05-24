@@ -195,11 +195,11 @@ The simulation results are used to assess the following hypotheses:
 
 | Category         | Hypothesis                                                        | Expected Outcome based on Simulation | Finding (Example based on previous run) |
 | :--------------- | :---------------------------------------------------------------- | :----------------------------------- | :-------------------------------------- |
-| Performance      | **H1:** CFDs lead to higher average returns                       | Unlikely due to costs/drag           | Not Supported                           |
-| Risk             | **H2:** CFDs increase volatility                                  | Unlikely (used defensively)          | Not Supported                           |
-| Sharpe Ratio     | **H3:** CFDs improve risk-adjusted returns                        | Possible if risk reduction is large  | Supported (Slightly)                    |
-| Diversification  | **H4:** CFDs enhance risk reduction despite inherent leverage | Expected (Lower MDD/Vol)             | Supported                               |
-| Crisis Response  | **H5:** CFD portfolios react more strongly (magnitude) to crises | Mixed (Depends on crisis)            | Mixed (Less in COVID, More in 2025)     |
+| Performance      | **H1:** CFDs lead to higher average returns                       | Unlikely due to costs/drag           | Check results                        |
+| Risk             | **H2:** CFDs increase volatility                                  | Unlikely (used defensively)          | Check results                            |
+| Sharpe Ratio     | **H3:** CFDs improve risk-adjusted returns                        | Possible if risk reduction is large  | Check results                  |
+| Diversification  | **H4:** CFDs enhance risk reduction despite inherent leverage | Expected (Lower MDD/Vol)             | Check results                              |
+| Crisis Response  | **H5:** CFD portfolios react more strongly (magnitude) to crises | Mixed (Depends on crisis)            | Check results      |
 
 <br>
 
