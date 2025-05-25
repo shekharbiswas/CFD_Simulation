@@ -48,29 +48,30 @@ This model incorporates a dynamic hedging strategy potentially using Contracts f
     *   `EQUITY_ALLOC_B = 0.80`: Similar to Model A, the base allocation for Model B is 80% in equities.
     *   `CASH_ALLOC_B = 0.20`: The base cash allocation for Model B is 20%.
       
-*   **VIX-Based Hedging Triggers:** These parameters define when the dynamic hedging component of Model B is activated or deactivated based on recent VIX momentum, not fixed thresholds.
-    *   `VIX_PCT_CHANGE_THRESHOLD_UP = 0.35`: The VIX must rise by more than **35% over the past 5 days** to be considered a valid fear signal.
-    *   `N_CONSECUTIVE_UP_DAYS_TO_SHORT = 3`: If the above condition holds for **3 consecutive days**, a short hedge is activated.
-    *   `MODEL_B_FIXED_HEDGE_RATIO_MOMENTUM = 0.70`: When active, the hedge covers **70% of the equity position** using CFDs.
-    *   `VIX_PCT_CHANGE_THRESHOLD_DOWN = -0.20`: If the VIX drops by **20% or more in a single day**, it may trigger a hedge removal.
-    *   `N_CONSECUTIVE_DOWN_DAYS_TO_COVER = 1`: A single qualifying drop is enough to start covering the hedge.
-    *   `VIX_ABSOLUTE_COVER_THRESHOLD = 20.0`: If VIX falls below **20**, the hedge is also removed — regardless of momentum.
+*   **VIX-Based Hedging Triggers (VIX Momentum Strategy for Model B):** These parameters define when the dynamic CFD hedging component of Model B is activated or deactivated based on recent VIX momentum and absolute levels.
 
+    *   `MOMENTUM_LOOKBACK_PERIOD = 5` (days): The lookback period for calculating VIX percentage change.
+    *   `VIX_PCT_CHANGE_THRESHOLD_UP = 0.35`: The VIX must exhibit a **5-day percentage increase greater than 35%** to qualify as an initial "fear spike" signal component.
+    *   `N_CONSECUTIVE_UP_DAYS_TO_SHORT = 3`: The "fear spike" condition (5-day VIX % change > +35%) must persist for **3 consecutive trading days** to trigger the activation of a short hedge.
+    *   `MODEL_B_FIXED_HEDGE_RATIO_MOMENTUM = 0.70`: When the hedge is active, it aims to cover **70% of the current equity position** using short S&P 500 CFDs.
+    *   `VIX_PCT_CHANGE_THRESHOLD_DOWN = -0.20`: A "calming signal" component is met if the **5-day VIX percentage change is less than -20%** (i.e., VIX has dropped by more than 20% compared to 5 days ago).
+    *   `N_CONSECUTIVE_DOWN_DAYS_TO_COVER = 1`: If the "calming signal" condition (5-day VIX % change < -20%) is met for at least **1 trading day**, it contributes to a signal to cover (close) the short hedge.
+    *   `VIX_ABSOLUTE_COVER_THRESHOLD = 20.0`: Independently, if the **current daily VIX level falls below 20.0**, the short hedge is also covered, regardless of recent momentum.
 
-         *   **Construction logic of the strategy:**
-         
-         The percentage change in the VIX compared to its value five trading days prior (VIX_Pct_Change_5D) is analyzed daily.
-         
-            *   Trigger conditions for initiating the hedge:
-                  - The 5-day VIX percentage change (VIX_Pct_Change_5D) must be greater than +35%.
-                  - This specific condition (5-day VIX % change > +35%) must persist for 3 consecutive trading days.
-                  - If both of these criteria are met, a short hedge position covering 70% of the portfolio's equity value is opened using CFDs.
-                  
-           
-           *    Exit signals for the hedge (deactivating the short position):The hedge is closed if either of the following conditions is met:
-                  -The 5-day VIX percentage change (VIX_Pct_Change_5D) is less than -20% (i.e., the VIX has dropped by more than 20% compared to 5 days ago) for at least 1 trading day.
-                  OR
-                  - The current daily VIX level falls below an absolute threshold value of 20.0.
+*   **Construction Logic of the VIX Momentum Hedging Strategy:**
+
+    The strategy analyzes the percentage change in the VIX compared to its value five trading days prior (`VIX_Pct_Change_5D`) on a daily basis.
+
+    *   **Trigger Conditions for Initiating the Hedge (Opening Short CFD Position):**
+        1.  The **5-day VIX percentage change** (`VIX_Pct_Change_5D`) must be greater than **+35%**.
+        2.  This specific condition (i.e., 5-day VIX % change > +35%) must persist for **3 consecutive trading days**.
+        *   If both these criteria are met, a short CFD hedge position is initiated, aiming to cover 70% of the portfolio's current equity value.
+
+    *   **Exit Signals for the Hedge (Closing/Covering Short CFD Position):**
+        The short CFD hedge is closed if **either** of the following conditions is met:
+        1.  **Downward VIX Momentum:** The **5-day VIX percentage change** (`VIX_Pct_Change_5D`) is less than **-20%** (indicating the VIX has dropped by more than 20% relative to 5 days prior) for at least **1 trading day**.
+            **OR**
+        2.  **Absolute VIX Level:** The **current daily VIX level** falls below an absolute threshold of **20.0**.
    
 
 *   **CFD Cost Assumptions (for Model B):** These parameters model the realistic costs associated with using CFDs for hedging.
