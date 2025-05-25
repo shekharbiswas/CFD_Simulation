@@ -61,17 +61,17 @@ This model incorporates a dynamic hedging strategy potentially using Contracts f
          
          The percentage change in the VIX compared to its value five trading days prior (VIX_Pct_Change_5D) is analyzed daily.
          
-         - Trigger conditions for initiating the hedge:
-               - The 5-day VIX percentage change (VIX_Pct_Change_5D) must be greater than +35%.
-               - This specific condition (5-day VIX % change > +35%) must persist for 3 consecutive trading days.
-               - If both of these criteria are met, a short hedge position covering 70% of the portfolio's equity value is opened using CFDs.
-               
+            *   Trigger conditions for initiating the hedge:
+                  - The 5-day VIX percentage change (VIX_Pct_Change_5D) must be greater than +35%.
+                  - This specific condition (5-day VIX % change > +35%) must persist for 3 consecutive trading days.
+                  - If both of these criteria are met, a short hedge position covering 70% of the portfolio's equity value is opened using CFDs.
+                  
            
-         - Exit signals for the hedge (deactivating the short position):The hedge is closed if either of the following conditions is met:
-               -The 5-day VIX percentage change (VIX_Pct_Change_5D) is less than -20% (i.e., the VIX has dropped by more than 20% compared to 5 days ago) for at least 1 trading day.
-               OR
-               - The current daily VIX level falls below an absolute threshold value of 20.0.
-
+           *    Exit signals for the hedge (deactivating the short position):The hedge is closed if either of the following conditions is met:
+                  -The 5-day VIX percentage change (VIX_Pct_Change_5D) is less than -20% (i.e., the VIX has dropped by more than 20% compared to 5 days ago) for at least 1 trading day.
+                  OR
+                  - The current daily VIX level falls below an absolute threshold value of 20.0.
+   
 
 *   **CFD Cost Assumptions (for Model B):** These parameters model the realistic costs associated with using CFDs for hedging.
     *   `BROKER_FEE_ANNUALIZED = 0.025`: An annualized financing cost of 2.5% charged by the broker on the notional value of open CFD positions (often related to the underlying interest rate plus a broker spread).
