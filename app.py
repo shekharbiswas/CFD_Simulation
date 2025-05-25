@@ -10,7 +10,7 @@ import numpy as np # Make sure numpy is imported
 # sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), 'scripts')))
 
 # Import project modules
-from scripts.config_loader import load_config
+from CFD_Simulation.scripts.config import load_config
 from scripts.data_loader import load_and_prepare_data
 from scripts.simulation_engine import simulate_classic_portfolio, simulate_hedged_portfolio
 from scripts.analysis import run_analysis

@@ -77,7 +77,7 @@ def calculate_spread_cost(contracts_closed, config):
 
 if __name__ == '__main__':
      # Example requires config_loader
-    from config_loader import load_config
+    from CFD_Simulation.scripts.config import load_config
     try:
         cfg = load_config('../../config/params.yaml') # Adjust path
         print("\nCost Model Examples:")

@@ -1,205 +1,152 @@
-# simulation_engine.py
-
 import pandas as pd
 import numpy as np
-from scripts import cfd_cost_model as costs
-from scripts import hedging_strategy as strategy
 
-def simulate_classic_portfolio(df, config):
-    """Simulates the classic buy-and-hold portfolio (Model A)."""
-    initial_capital = config['initial_capital']
-    equity_alloc = config['equity_allocation']
-    sp500_col = config['sp500_column'] # Used for info if needed, logic uses return col
+def simulate_portfolio_A(df_data, initial_capital, equity_alloc_A):
+    """Simulates Model A: Static allocation."""
+    # print(f"Simulating Model A with initial capital: {initial_capital}, equity_alloc: {equity_alloc_A}")
+    if df_data.empty or 'SP500_Return' not in df_data.columns:
+        # print("Model A: Empty data or missing SP500_Return column.")
+        return pd.Series(dtype=float)
 
-    equity_A = initial_capital * equity_alloc
-    cash_A = initial_capital * (1.0 - equity_alloc)
-    portfolio_A_values = []
-    dates_A = []
+    portfolio_values_list = []
+    current_value = initial_capital
+    
+    # The first day's return applies to the initial capital.
+    # The loop should start from the first row of df_data.
+    # portfolio_values_list will store end-of-day values.
 
-    # Use pre-calculated SP500_Return column
-    sim_data = df[['SP500_Return']].copy()
-    current_equity = equity_A # Initialize
-
-    # Add initial state
-    if not sim_data.empty:
-        initial_date = sim_data.index[0]
-        portfolio_A_values.append(initial_capital)
-        # Use previous day for initial state timestamp if possible
-        dates_A.append(initial_date - pd.Timedelta(days=1))
-
-    for date, row in sim_data.iterrows():
-        # Equity value changes with market return
-        return_val = row['SP500_Return']
-        if pd.isna(return_val): # Handle potential NaNs in returns
-            print(f"Warning: NaN return found on {date}. Holding equity constant.")
+    for i in range(len(df_data)):
+        sp500_return = df_data['SP500_Return'].iloc[i]
+        if pd.isna(sp500_return): # Handle potential NaNs in returns
+            # print(f"Model A: NaN SP500_Return at index {i}, date {df_data['date'].iloc[i]}. Holding value.")
+            portfolio_return = 0
         else:
-            current_equity *= (1 + return_val)
-
-        portfolio_value = current_equity + cash_A # Cash is constant
-        if pd.isna(portfolio_value): # Failsafe
-            print(f"Warning: NaN portfolio value on {date}. Reverting.")
-            portfolio_value = portfolio_A_values[-1] if portfolio_A_values else initial_capital
-
-        portfolio_A_values.append(portfolio_value)
-        dates_A.append(date)
-
-    if not dates_A: return pd.Series(name="Portfolio_A", dtype=float)
-
-    portfolio_A = pd.Series(portfolio_A_values, index=pd.DatetimeIndex(dates_A), name="Portfolio_A")
-    print("Classic portfolio (Model A) simulation complete.")
-    return portfolio_A
+            portfolio_return = equity_alloc_A * sp500_return
+        
+        current_value *= (1 + portfolio_return)
+        portfolio_values_list.append(current_value)
+        
+    if not portfolio_values_list:
+        return pd.Series(dtype=float)
+        
+    return pd.Series(portfolio_values_list, index=df_data.index)
 
 
-def simulate_hedged_portfolio(df, config):
-    """Simulates the CFD-hedged portfolio (Model B)."""
-    initial_capital = config['initial_capital']
-    equity_alloc = config['equity_allocation']
-    sp500_col = config['sp500_column']
-    vix_col = config['vix_column']
-    sofr_col = config['sofr_column']
+def simulate_portfolio_B_momentum(df_data_with_signals, initial_capital, cfg):
+    """Simulates Model B: Dynamic VIX momentum hedge."""
+    # print(f"Simulating Model B (Momentum) with initial capital: {initial_capital}")
+    if df_data_with_signals.empty:
+        # print("Model B: Empty data.")
+        return pd.Series(dtype=float)
 
-    equity_B = initial_capital * equity_alloc
-    cash_B = initial_capital * (1.0 - equity_alloc)
-    portfolio_B_values = []
-    dates_B = []
-    cost_data = [] # Store detailed daily costs
+    essential_cols = ['SP500_Return', 'S&P500', 'SOFR_Rate', 
+                      'Short_Signal_Today', 'Cover_Signal_Momentum_Today', 'Cover_Signal_Absolute_VIX_Today']
+    for col in essential_cols:
+        if col not in df_data_with_signals.columns:
+            print(f"Model B: Missing essential column '{col}'.")
+            return pd.Series(dtype=float)
 
-    current_equity = equity_B # Track equity portion
+    total_value = initial_capital
+    equity_value = total_value * cfg.EQUITY_ALLOC_B
+    cash_value = total_value * cfg.CASH_ALLOC_B
+    
+    portfolio_values_history = []
+    cfd_active = False
+    cfd_entry_sp500_price = 0.0
+    cfd_notional_value = 0.0
+    cfd_margin_account_deduction = 0.0
 
-    # Hedging state variables
-    current_contracts = 0.0 # Number of short CFD contracts held
-    margin_held = 0.0
-
-    # Add initial state
-    if not df.empty:
-        initial_date = df.index[0]
-        portfolio_B_values.append(initial_capital)
-        dates_B.append(initial_date - pd.Timedelta(days=1))
-        cost_data.append({'date': initial_date - pd.Timedelta(days=1), 'Financing': 0, 'Borrowing': 0, 'Spread': 0, 'Total': 0, 'Contracts': 0, 'Margin': 0})
-
-    # Iterate through data
-    sim_data = df[['SP500_Return', sp500_col, 'Prev_S&P500', vix_col, sofr_col]].copy()
-
-    for date, row in sim_data.iterrows():
-        # --- 1. Update Equity Value ---
-        sp_return = row['SP500_Return']
-        if pd.notna(sp_return):
-            equity_gain_loss = current_equity * sp_return
-            current_equity += equity_gain_loss
-        else:
-            print(f"Warning: NaN S&P500 return on {date}. Equity value held constant.")
-            equity_gain_loss = 0
-
-        # --- 2. Calculate P&L and Costs for Existing Hedge (from yesterday) ---
-        daily_cfd_pnl = 0.0
-        financing_cost = 0.0
-        borrowing_cost = 0.0
-        spread_cost_today = 0.0
-
-        prev_price = row['Prev_S&P500']
-        current_price = row[sp500_col]
-        sofr_rate = row[sofr_col]
-        vix_level = row[vix_col]
-
-        # Check for valid data needed for cost/PnL calcs
-        if current_contracts > 0 and pd.notna(prev_price) and prev_price > 0 and pd.notna(current_price) and current_price > 0 and pd.notna(sofr_rate):
-            # P&L on short CFD (based on price change from prev close to current close)
-            daily_cfd_pnl = current_contracts * config['lot_size'] * (prev_price - current_price)
-
-            # Overnight financing cost/credit (applied for holding position into today)
-            financing_cost = costs.calculate_daily_financing_cost(
-                current_contracts, prev_price, sofr_rate, config, is_short=True
-            )
-            # Overnight borrowing cost
-            borrowing_cost = costs.calculate_daily_borrowing_cost(
-                current_contracts, prev_price, config, is_short=True
-            )
-
-            # Update cash *before* deciding today's action
-            cash_B += daily_cfd_pnl - financing_cost - borrowing_cost
-        else:
-            # Handle cases where PnL/costs cannot be calculated (e.g., first day, missing data)
-             if current_contracts > 0:
-                 print(f"Warning: Could not calculate PnL/Costs on {date} for {current_contracts} contracts. Missing data?")
+    for i in range(len(df_data_with_signals)):
+        row = df_data_with_signals.iloc[i]
+        sp500_return_t = row['SP500_Return']
+        sp500_price_t = row['S&P500']
+        # SOFR rate needs to be present and numeric. If it's NaN, simulation might break or give bad results.
+        sofr_annual_t = row['SOFR_Rate'] if pd.notna(row['SOFR_Rate']) else 0.0 # Default to 0 if NaN
 
 
-        # --- 3. Determine Target Hedge for Today ---
-        target_contracts = 0.0
-        if pd.notna(vix_level) and pd.notna(current_price) and current_price > 0 and pd.notna(current_equity):
-             is_currently_hedged = current_contracts > 0
-             target_contracts = strategy.get_hedge_action(vix_level, current_equity, current_price, is_currently_hedged, config)
-        else:
-             print(f"Warning: Cannot determine hedge action on {date}. Missing VIX/Price/Equity?")
-             target_contracts = current_contracts # Maintain current state if decision data missing
+        trigger_short_today = row['Short_Signal_Today']
+        trigger_cover_momentum = row['Cover_Signal_Momentum_Today']
+        trigger_cover_absolute_vix = row['Cover_Signal_Absolute_VIX_Today']
+        
+        if pd.isna(sp500_return_t) or pd.isna(sp500_price_t):
+            # print(f"Model B: NaN market data at index {i}, date {row['date']}. Holding value.")
+            portfolio_values_history.append(total_value) # Append current total value if data is bad
+            continue
 
-        # --- 4. Execute Hedge Changes ---
-        contracts_change = target_contracts - current_contracts
+        # 1. Equity component grows/shrinks
+        equity_value *= (1 + sp500_return_t)
 
-        if abs(contracts_change) > 1e-6: # If there's a change needed (using tolerance for float comparison)
-            if contracts_change < 0: # Closing some or all contracts
-                contracts_closed = abs(contracts_change)
-                # Apply spread cost for contracts being closed
-                spread_cost_today = costs.calculate_spread_cost(contracts_closed, config)
-                cash_B -= spread_cost_today
-                # print(f"{date}: Closing {-contracts_change:.2f} contracts. Spread Cost: {spread_cost_today:.2f}")
+        # 2. CFD Financing & P&L (if active)
+        if cfd_active:
+            # Financing cost for short CFD is -(SOFR - Broker Fee) = Broker Fee - SOFR
+            # If Broker Fee > SOFR, it's a cost. If SOFR > Broker Fee, it's a credit.
+            # The notebook had (sofr_annual_t - BROKER_FEE_ANNUALIZED)
+            # For a short CFD, you typically pay financing based on a benchmark rate + broker spread,
+            # or receive financing if benchmark rate is negative or below broker's base.
+            # Assuming the broker fee is what you pay *on top* of the interbank rate for financing.
+            # So, cost is (Interbank Rate + Broker Spread).
+            # The notebook seems to model it as (SOFR - Broker Fee), implying SOFR is received and Broker Fee is paid.
+            # Let's stick to the notebook's (SOFR_annual - BROKER_FEE_ANNUALIZED) / 365
+            # financing_rate_daily = (sofr_annual_t - cfg.BROKER_FEE_ANNUALIZED) / 365.0 # Correct as per notebook
+            # A positive financing_rate_daily means a gain for the short CFD holder (cash increases)
+            # A negative financing_rate_daily means a cost for the short CFD holder (cash decreases)
+            
+            # Clarification on CFD financing for a SHORT position:
+            # You are effectively borrowing the stock to sell it.
+            # If you short, you receive cash, but also have to pay dividends out.
+            # Financing costs are typically (benchmark rate + broker's borrow fee) * notional.
+            # The notebook formula (sofr_annual_t - BROKER_FEE_ANNUALIZED) suggests:
+            # sofr_annual_t is a rate received (e.g. on cash from short sale proceeds if held by broker)
+            # BROKER_FEE_ANNUALIZED is a cost (e.g. stock borrowing fee or general CFD fee).
+            # If `financing_rate_daily` is positive, it's a credit to cash. If negative, a debit.
+            # This seems like a net financing effect.
+            financing_rate_daily = (sofr_annual_t - cfg.BROKER_FEE_ANNUALIZED) / 365.0
+            cfd_financing_impact = cfd_notional_value * financing_rate_daily # This is gain/loss on the cash from short position
+            cash_value += cfd_financing_impact # Add to cash
+            
+        # 3. Hedging Logic
+        if cfd_active and (trigger_cover_momentum or trigger_cover_absolute_vix):
+            # P&L from short CFD: -(Current Price - Entry Price) / Entry Price * Notional
+            # = (Entry Price - Current Price) / Entry Price * Notional
+            # = (1 - Current Price / Entry Price) * Notional
+            cfd_pnl = cfd_notional_value * (1 - (sp500_price_t / cfd_entry_sp500_price))
+            cash_value += cfd_pnl
+            
+            # Spread cost on closing
+            # Notional at close for spread calculation (current market value of the hedged amount)
+            notional_at_close_for_spread = cfd_notional_value * (sp500_price_t / cfd_entry_sp500_price) # This is current value of initial notional
+            spread_cost = cfg.SPREAD_COST_PERCENT * notional_at_close_for_spread
+            cash_value -= spread_cost
+            
+            # Return margin
+            cash_value += cfd_margin_account_deduction
+            
+            cfd_active = False
+            cfd_entry_sp500_price = 0.0
+            cfd_notional_value = 0.0
+            cfd_margin_account_deduction = 0.0
+        
+        elif not cfd_active and trigger_short_today:
+            amount_to_hedge = cfg.MODEL_B_FIXED_HEDGE_RATIO_MOMENTUM * equity_value
+            margin_required = cfg.CFD_INITIAL_MARGIN_PERCENT * amount_to_hedge
+            
+            if cash_value >= margin_required:
+                cfd_active = True
+                cfd_notional_value = amount_to_hedge
+                cfd_entry_sp500_price = sp500_price_t
+                cfd_margin_account_deduction = margin_required
+                cash_value -= cfd_margin_account_deduction
+            # else: No action if insufficient margin
 
-            # Update contract count to the target
-            current_contracts = target_contracts
+        # 4. Update total portfolio value
+        total_value = equity_value + cash_value
+        portfolio_values_history.append(total_value)
+        
+        # 5. Daily Rebalance (Simplified)
+        equity_value = total_value * cfg.EQUITY_ALLOC_B
+        cash_value = total_value * cfg.CASH_ALLOC_B
+        
+    if not portfolio_values_history:
+        return pd.Series(dtype=float)
 
-        # --- 5. Calculate and Adjust Margin ---
-        new_margin_required = 0.0
-        if current_contracts > 0 and pd.notna(current_price) and current_price > 0:
-             new_margin_required = costs.calculate_margin(current_contracts, current_price, config)
-        else: # Ensure current_contracts is explicitly 0 if price is invalid
-             current_contracts = 0.0
-
-
-        margin_change = new_margin_required - margin_held
-
-        if abs(margin_change) > 1e-6:
-            # Check if sufficient cash for margin increase
-            if margin_change > 0 and cash_B < margin_change:
-                # Insufficient cash! Force close position or handle differently.
-                # Simple approach: Cannot meet margin call, assume we close the position.
-                print(f"WARN {date}: Insufficient cash ({cash_B:.2f}) for margin increase ({margin_change:.2f}). Forcing close hedge.")
-                spread_cost_today += costs.calculate_spread_cost(current_contracts, config) # Cost to close
-                cash_B -= spread_cost_today
-                cash_B += margin_held # Release old margin
-                current_contracts = 0.0
-                margin_held = 0.0
-                new_margin_required = 0.0
-                margin_change = new_margin_required - margin_held # Now margin_change is likely negative or zero
-
-            # Adjust cash and margin held
-            cash_B -= margin_change # If margin increases, cash decreases. If margin decreases, cash increases.
-            margin_held = new_margin_required
-
-
-        # --- 6. Store Daily Costs & State ---
-        cost_data.append({
-            'date': date,
-            'Financing': financing_cost,
-            'Borrowing': borrowing_cost,
-            'Spread': spread_cost_today,
-            'Total': financing_cost + borrowing_cost + spread_cost_today,
-            'Contracts': current_contracts,
-            'Margin': margin_held
-        })
-
-        # --- 7. Calculate Total Portfolio Value ---
-        portfolio_value = current_equity + cash_B + margin_held # Equity + Free Cash + Margin Cash
-        if pd.isna(portfolio_value): # Failsafe
-            print(f"Warning: NaN portfolio value on {date}. Equity:{current_equity}, Cash:{cash_B}, Margin:{margin_held}. Reverting.")
-            portfolio_value = portfolio_B_values[-1] if portfolio_B_values else initial_capital
-
-        portfolio_B_values.append(portfolio_value)
-        dates_B.append(date)
-
-
-    if not dates_B: return pd.Series(name="Portfolio_B", dtype=float), pd.DataFrame()
-
-    portfolio_B = pd.Series(portfolio_B_values, index=pd.DatetimeIndex(dates_B), name="Portfolio_B")
-    cost_df = pd.DataFrame(cost_data).set_index('date')
-
-    print("Hedged portfolio (Model B) simulation complete.")
-    return portfolio_B, cost_df
+    return pd.Series(portfolio_values_history, index=df_data_with_signals.index)
