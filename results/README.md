@@ -47,10 +47,15 @@ This model incorporates a dynamic hedging strategy potentially using Contracts f
 *   **Base Allocation:**
     *   `EQUITY_ALLOC_B = 0.80`: Similar to Model A, the base allocation for Model B is 80% in equities.
     *   `CASH_ALLOC_B = 0.20`: The base cash allocation for Model B is 20%.
-*   **VIX-Based Hedging Triggers:** These parameters define when the dynamic hedging component of Model B is activated or deactivated.
-    *   `MODEL_B_VIX_ACTIVATE_THRESH = 30.0`: The hedging strategy is triggered (e.g., short CFD positions are opened) if the VIX index rises above this threshold of 30.0.
-    *   `MODEL_B_VIX_DEACTIVATE_THRESH = 10.0`: The hedge is removed (e.g., CFD positions are closed) if the VIX falls below this threshold of 10.0. It's crucial that this is lower than the activation threshold to prevent rapid cycling.
-    *   `MODEL_B_FIXED_HEDGE_RATIO = 0.90`: When the hedge is active, this ratio (90%) determines the notional value of the hedge relative to the portfolio's equity value.
+      
+*   **VIX-Based Hedging Triggers:** These parameters define when the dynamic hedging component of Model B is activated or deactivated based on recent VIX momentum, not fixed thresholds.
+    *   `VIX_PCT_CHANGE_THRESHOLD_UP = 0.35`: The VIX must rise by more than **35% over the past 5 days** to be considered a valid fear signal.
+    *   `N_CONSECUTIVE_UP_DAYS_TO_SHORT = 3`: If the above condition holds for **3 consecutive days**, a short hedge is activated.
+    *   `MODEL_B_FIXED_HEDGE_RATIO_MOMENTUM = 0.70`: When active, the hedge covers **70% of the equity position** using CFDs.
+    *   `VIX_PCT_CHANGE_THRESHOLD_DOWN = -0.20`: If the VIX drops by **20% or more in a single day**, it may trigger a hedge removal.
+    *   `N_CONSECUTIVE_DOWN_DAYS_TO_COVER = 1`: A single qualifying drop is enough to start covering the hedge.
+    *   `VIX_ABSOLUTE_COVER_THRESHOLD = 20.0`: If VIX falls below **20**, the hedge is also removed — regardless of momentum.
+
 *   **CFD Cost Assumptions (for Model B):** These parameters model the realistic costs associated with using CFDs for hedging.
     *   `BROKER_FEE_ANNUALIZED = 0.025`: An annualized financing cost of 2.5% charged by the broker on the notional value of open CFD positions (often related to the underlying interest rate plus a broker spread).
     *   `SPREAD_COST_PERCENT = 0.0002`: A one-time transaction cost, representing 0.02% of the notional value, incurred when a CFD position is closed. This models the bid-ask spread.
