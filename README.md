@@ -1,291 +1,190 @@
-# CFD Hedging Strategy
+# CFD Hedging Strategy & VIX Momentum Simulation
 
-This project investigates how Contracts for Difference (CFDs) can be strategically integrated into modern investment portfolios to manage return, risk, and crisis resilience.
+## Overview
 
-CFDs are derivative instruments that allow investors to speculate on asset price movements without actually owning the underlying security. This characteristic grants them flexibility but also introduces significant risks, primarily through leverage.
+This project investigates how Contracts for Difference (CFDs) can be strategically integrated into investment portfolios. It specifically simulates and compares two main portfolio models:
 
-Traditional investing often focuses on long-term growth, diversification, and capital preservation through asset allocation. However, traditional portfolios can be slow to adapt and may suffer substantial losses during periods of heightened market volatility or sudden downturns.
+*   **Model A (Classic):** A traditional portfolio with a static allocation to S&P 500 equities and cash.
+*   **Model B (Dynamic CFD Hedge):** A portfolio with a similar base allocation to Model A, but which dynamically activates **short S&P 500 CFD positions** as a hedge. This hedging is triggered by a **VIX momentum strategy**, where signals to short or cover are generated based on recent VIX percentage changes and absolute VIX levels.
 
-CFDs, when employed strategically and with rigorous risk management, offer potential tools to address these challenges. They provide mechanisms for both long and short market exposure, can be implemented relatively quickly, and allow investors to potentially hedge existing positions without liquidating underlying assets.
+The project aims to evaluate the impact of this dynamic CFD hedging strategy on portfolio return, risk, and resilience during various market conditions, including historical events like the COVID-19 crash and simulated future crisis scenarios.
 
-This project specifically aims to evaluate a *defensive* use case for CFDs. It compares a classic S&P 500 stock/cash portfolio against a similar portfolio that incorporates short S&P 500 CFD positions as a hedge, automatically triggered by elevated market volatility (measured by the VIX index).
-
-Simulations are conducted using historical market data covering the period from 2019 through mid-2025, encompassing diverse market conditions, including the significant volatility spike during the COVID-19 crash of 2020 and a simulated high-volatility period in 2025 based on the provided data. This allows for an assessment of the strategy's performance in both volatile and more stable environments.
-
-We utilize historical price data (S&P 500, VIX) and interest rate data (SOFR) to analyze key financial metrics, including:
-
-*   Total Return & Annualized Volatility
-*   Sharpe Ratio (risk-adjusted return)
-*   Maximum Drawdown (peak-to-trough decline)
-*   Value at Risk (VaR) and Expected Shortfall (ES) (tail risk measures)
-
-A crucial aspect of the analysis is the incorporation of realistic CFD trading costs, modeled based on provider information (IG Markets, 2024), covering overnight financing charges, borrowing costs for short positions, average spreads, and margin requirements.
-
-By combining financial theory with quantitative simulation, this project tests specific hypotheses about how this VIX-triggered CFD hedging strategy influences portfolio behavior, particularly its effectiveness in mitigating risk during market stress versus its potential drag on returns during normal conditions.
+Simulations are conducted using historical market data for S&P 500, VIX, and SOFR (Secured Overnight Financing Rate) from 2019 through mid-2025. The analysis incorporates realistic CFD trading costs, including financing, spreads, and margin requirements.
 
 ## 📘 What Are CFDs? (In this Project Context)
 
 A Contract for Difference (CFD) is a derivative contract where two parties agree to exchange the difference in the value of an underlying asset between the time the contract is opened and when it is closed. For this project, we focus on:
 
 *   **No Ownership:** Trading the S&P 500 index via CFDs without owning the underlying stocks.
-*   **Hedging Tool:** Primarily using **short** S&P 500 CFDs to offset potential losses in a long S&P 500 equity position during high volatility.
-*   **Costs:** Acknowledging and modeling associated costs like financing, borrowing, spreads, and margin.
-*   **Leverage Implication:** While CFDs inherently offer leverage, this project uses them defensively, meaning the leverage primarily impacts the *cost basis* (financing/borrowing) and *margin requirements* rather than amplifying upside returns. The risk profile is modified by the hedge, not necessarily amplified in the traditional leveraged sense.
+*   **Hedging Tool:** Primarily using **short** S&P 500 CFDs to offset potential losses in a long S&P 500 equity position during periods of high or increasing market volatility.
+*   **VIX Momentum Trigger:** The decision to hedge (short CFDs) or cover (close short CFDs) is based on a defined VIX momentum strategy, considering:
+    *   Significant percentage increases in VIX over a lookback period to initiate shorts.
+    *   Significant percentage decreases in VIX or absolute VIX levels falling below a threshold to cover shorts.
+*   **Costs:** Acknowledging and modeling associated costs like financing charges/credits, spreads on closing positions, and initial margin requirements.
+*   **Leverage Implication:** While CFDs offer leverage, this project uses them for a defensive hedge. Leverage impacts cost calculations (financing based on notional value) and margin, rather than seeking amplified speculative returns.
 
 ## 📌 Objectives
 
 The core objectives of this project are to:
 
-1.  **Compare Performance:** Simulate and contrast the performance of two distinct portfolio models:
-    *   **Model A (Classic):** A traditional portfolio holding 80% in S&P 500 equities and 20% in cash.
-    *   **Model B (CFD-Hedged):** A portfolio holding 80% S&P 500 equities, 20% initial cash, but which activates **short S&P 500 CFD positions** to hedge a portion (e.g., 50%) of the equity exposure when the VIX index exceeds a predefined threshold (e.g., VIX > 25).
-      
-2.  **Evaluate Risk & Diversification Impact:** Quantify how the CFD hedging strategy affects portfolio risk using standard metrics:
-    *   Volatility (Standard Deviation)
-    *   Value at Risk (VaR - 95th percentile potential loss)
-    *   Expected Shortfall (ES - average loss beyond VaR)
-    *   Sharpe Ratio (comparing return against risk)
-    *   Maximum Drawdown (largest peak-to-valley loss)
-      
-3.  **Incorporate Realistic Costs:** Model the financial impact of using CFDs by including:
-    *   Overnight financing charges/credits based on the SOFR benchmark rate plus/minus a broker fee.
-    *   Specific borrowing costs associated with maintaining short CFD positions.
-    *   Average spread costs incurred when closing CFD hedge positions.
-    *   Tiered margin requirements based on position size, affecting available cash.
-      
-4.  **Simulate Crisis Behavior:** Analyze portfolio performance during specific historical and simulated high-stress periods:
-    *   The COVID-19 market crash (approx. Feb-Apr 2020).
-    *   A period of high VIX readings in the provided 2025 data (approx. Mar-May 2025).
-      
-5.  **Test VIX Trigger:** Utilize the VIX index as the explicit mechanism to activate and deactivate the short CFD hedges.
-   
-6.  **Test Hypotheses:** Evaluate predefined hypotheses regarding the expected effects of this CFD hedging strategy on:
-    *   Average portfolio return.
-    *   Overall portfolio risk (volatility).
-    *   Risk-adjusted return (Sharpe Ratio).
-    *   Diversification / Risk Reduction effectiveness.
-    *   Portfolio behavior during crisis periods.
-
-<br>
+1.  **Compare Performance:** Simulate and contrast the performance of:
+    *   **Model A (Classic):** 80% S&P 500 equities, 20% cash.
+    *   **Model B (VIX Momentum Hedge):** 80% S&P 500 equities, 20% initial cash, with short S&P 500 CFDs activated based on the VIX momentum strategy to hedge a specified portion of equity exposure.
+2.  **Evaluate Risk & Return Profile:** Quantify how the VIX-momentum CFD hedging strategy affects:
+    *   Portfolio volatility and risk-adjusted returns (Sharpe Ratio, Sortino Ratio).
+    *   Downside risk (Maximum Drawdown, VaR, Expected Shortfall).
+3.  **Incorporate Realistic Costs:** Model the financial impact of using CFDs, including overnight financing (based on SOFR and broker fees), spread costs on closing, and initial margin.
+4.  **Simulate Crisis Behavior:** Analyze portfolio performance during specific historical (COVID-19 crash) and simulated high-stress periods.
+5.  **Test Hypotheses:** Evaluate predefined hypotheses regarding the effects of the VIX-momentum CFD hedging strategy.
 
 ## 📊 Key Metrics Used
 
-*   **Total Return:** The overall percentage gain or loss over the entire simulation period.
-*   **Annualized Return:** The geometric average annual rate of return.
-*   **Annualized Volatility (σ):** The standard deviation of daily returns, scaled to an annual figure, measuring price fluctuation risk.
-*   **Sharpe Ratio:** Measures risk-adjusted return by calculating excess return (over a risk-free rate, proxied by average SOFR) per unit of volatility.
-*   **Value at Risk (VaR):** Estimates the maximum potential loss over a specific time horizon at a given confidence level (e.g., 95% VaR indicates the loss expected to be exceeded only 5% of the time). Calculated historically.
-*   **Expected Shortfall (ES):** Also known as Conditional VaR (CVaR), measures the expected loss *given* that the loss exceeds the VaR threshold. Provides insight into the severity of tail-risk events. Calculated historically.
-*   **Maximum Drawdown (MDD):** The largest percentage decline from a portfolio's peak value to a subsequent trough, indicating the worst-case loss experienced.
-
-<br>
+*   **Total Return & Annualized Return**
+*   **Annualized Volatility (Standard Deviation)**
+*   **Sharpe Ratio** (risk-adjusted return using average SOFR as risk-free rate proxy)
+*   **Sortino Ratio** (risk-adjusted return focusing on downside deviation)
+*   **Maximum Drawdown (MDD)**
+*   **Value at Risk (VaR 95%)** (Historical)
+*   **Expected Shortfall (ES / CVaR 95%)** (Historical)
+*   Omega Ratio, Skewness, Kurtosis, Win/Loss Ratios, Profit Factor, Recovery Factor.
 
 ## 📈 Data Used
 
-| Data Component          | Source/Ticker/Label             | Used For                                                     | Notes                                                                |
-| :---------------------- | :------------------------------ | :----------------------------------------------------------- | :------------------------------------------------------------------- |
-| S&P 500 Index Prices    | `^GSPC` (API) / `S&P500` (CSV)  | Portfolio equity component return, volatility, drawdown        | Fetched via FMP API or loaded from CSV.                                |
-| VIX Index Levels        | `^VIX` (API) / `VIX` (CSV)      | Hedging trigger logic (signal to open/close short CFDs)      | Fetched via FMP API or loaded from CSV.                                |
-| SOFR Rate (USD O/N)     | `SOFR` (CSV column)             | Benchmark rate for calculating CFD overnight financing costs | **Crucially loaded from the provided CSV file.** Not fetched from API. |
-| CFD Cost Parameters     | Static values in `params.yaml`  | Cost modeling (spread, financing fee, borrow rate)           | Based on IG Markets (2024) assumptions from source material.         |
-| CFD Margin Requirements | Tiered rates in `params.yaml` | Calculating margin cash needed, impacting available cash    | Based on IG Markets (2024) tiered structure.                       |
+| Data Component       | Source/Ticker/Label          | Used For                                                  |
+| :------------------- | :--------------------------- | :-------------------------------------------------------- |
+| S&P 500 Index Prices | `^GSPC` (API)                | Portfolio equity component returns                        |
+| VIX Index Levels     | `^VIX` (API)                 | VIX momentum signal generation for hedging strategy       |
+| SOFR Rate (USD O/N)  | `SOFR.csv` (local file)      | Benchmark rate for CFD overnight financing calculations |
 
-<br>
+*Note: S&P 500 and VIX data are fetched via the Financial Modeling Prep (FMP) API. SOFR data is loaded from a local CSV file.*
 
 ## ⚙️ Technology Stack
 
-*   **Language:** Python (version 3.8+ recommended)
-*   **Core Libraries:**
-    *   `pandas`: Data manipulation and analysis.
-    *   `numpy`: Numerical operations.
-    *   `matplotlib`: Plotting and visualization.
-    *   `PyYAML`: Loading configuration from YAML files.
-    *   `requests`: Fetching data from web APIs (if enabled).
-    *   `python-dotenv`: Loading environment variables from `.env` files (for API keys).
-    *   `streamlit`: Creating the interactive web application.
-*   **Optional Libraries (for `notebooks/` or extended analysis):** `scipy`, `statsmodels`, `arch`, `scikit-learn`.
-
-<br>
+*   **Language:** Python (3.8+)
+*   **Core Libraries:** `pandas`, `numpy`, `requests`, `plotly`
 
 ## 📁 Project Structure
 
-The project follows a modular structure for better organization and maintainability:
+The project is organized into Python scripts for modularity:
 
-<pre>
-cfd_simulation/
-├── data/ # Input data files
-│ └── vix_sp500_data.csv
-├── config/ # Configuration files
-│ └── params.yaml
-├── scripts/ # Python source code modules
-│ ├── init.py # Makes 'scripts' a package
-│ ├── config_loader.py # Loads YAML configuration
-│ ├── data_loader.py # Loads/Fetches and prepares data
-│ ├── cfd_cost_model.py # Calculates CFD costs (margin, financing, etc.)
-│ ├── risk_metrics.py # Calculates portfolio risk/performance metrics
-│ ├── hedging_strategy.py # Defines the VIX-based hedging logic
-│ ├── simulation_engine.py # Runs the day-by-day portfolio simulation loop
-│ ├── analysis.py # Performs comparative analysis on simulation results
-│ ├── plotting.py # Generates plots using Matplotlib
-│ └── utils.py # Utility functions (optional, e.g., logging)
-├── notebooks/ # Jupyter notebooks for exploration (optional)
-│ └── exploratory_analysis.ipynb
-├── app.py # Streamlit web application (imports from scripts)
-├── run.py # Main script for command-line execution
-├── requirements.txt # Python dependencies
-└── README.md # This file
-
-</pre>
-
-<br>
+*   **`config.py`**: All configuration parameters, API keys, file paths, and simulation settings.
+*   **`data_loader.py`**: Functions for fetching (S&P 500, VIX via FMP) and loading (SOFR from CSV) market data.
+*   **`signal_generation.py`**: Implements the VIX momentum strategy to generate `Short_Signal_Today`, `Cover_Signal_Momentum_Today`, and `Cover_Signal_Absolute_VIX_Today` signals.
+*   **`simulation_engine.py`**: Contains `simulate_portfolio_A` and `simulate_portfolio_B_momentum` functions.
+*   **`risk_metrics.py`**: Calculates the comprehensive set of financial and risk metrics.
+*   **`plotting.py`**: Generates Plotly charts for visualization.
+*   **`main_analysis.py`**: Orchestrates the entire workflow: data loading, signal generation, simulation, metrics calculation, hypothesis testing, and plotting.
 
 ## 📜 Script Breakdown and Logic
 
-| Script Name             | Purpose                                                                                                | Key Logic / Functionality                                                                                                                            |
-| :---------------------- | :----------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `config_loader.py`      | Loads simulation parameters.                                                                           | Reads `config/params.yaml` into a Python dictionary.                                                                                                 |
-| `data_loader.py`        | Loads/fetches and preprocesses data.                                                                   | Handles loading `vix_sp500_data.csv` OR fetching S&P500/VIX from FMP API (using secure API key), merges with SOFR from CSV, calculates returns, cleans data. |
-| `cfd_cost_model.py`     | Calculates CFD-specific costs.                                                                         | Functions for tiered margin (`calculate_margin`), daily financing (`calculate_daily_financing_cost`), borrowing (`calculate_daily_borrowing_cost`), spread. |
-| `risk_metrics.py`       | Computes portfolio metrics.                                                                            | Functions for `calculate_metrics` (Return, Volatility, Sharpe, MDD, VaR, ES).                                                                       |
-| `hedging_strategy.py`   | Implements the hedging decision logic.                                                                 | Function `get_hedge_action` determines target short CFD contracts based on VIX level, current portfolio state, and config thresholds/ratios.           |
-| `simulation_engine.py`  | Runs the core day-by-day simulation.                                                                   | Contains `simulate_classic_portfolio` (Model A) and `simulate_hedged_portfolio` (Model B) which iterate daily, update values, apply costs, and implement hedging. |
-| `analysis.py`           | Performs comparative analysis.                                                                         | Function `run_analysis` takes simulation results, calculates metrics for full/crisis periods, and evaluates the predefined hypotheses.                 |
-| `plotting.py`           | Generates visualizations.                                                                              | Functions to create Matplotlib charts (portfolio comparison, VIX, costs, contracts/margin). Includes logic to save plots based on config.          |
-| `utils.py`              | Optional helper functions.                                                                             | Can include logging setup or other reusable utilities.                                                                                             |
-| `run.py`                | Command-line execution entry point.                                                                    | Orchestrates the workflow: load config -> load data -> run simulations -> run analysis -> display results -> generate plots.                           |
-| `app.py`                | Interactive web application entry point.                                                               | Uses Streamlit to provide UI controls (sliders, inputs), runs simulations/analysis on demand, and displays results/plots interactively.             |
-| `params.yaml`           | Central configuration file.                                                                            | Defines all adjustable parameters: file paths, tickers, thresholds, costs, allocations, API settings, etc.                                          |
-<br>
+| Script Name             | Purpose                                                              | Key Logic / Functionality                                                                                                                                                                                                                            |
+| :---------------------- | :------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `config.py`             | Central configuration.                                               | Stores API keys, file paths, simulation start/end dates, portfolio allocations, VIX momentum parameters (lookback, thresholds, consecutive days), CFD costs (broker fee, spread, margin).                                                                |
+| `data_loader.py`        | Data acquisition and preparation.                                    | Fetches S&P 500 & VIX from FMP API; loads SOFR from `SOFR.csv`; merges data; calculates basic returns.                                                                                                                                                 |
+| `signal_generation.py`  | VIX momentum signal logic.                                           | Calculates VIX percentage change over a lookback, identifies up/down momentum conditions based on thresholds, counts consecutive days meeting conditions, and generates `Short_Signal_Today` and cover signals based on rules defined in `config.py`.      |
+| `simulation_engine.py`  | Core portfolio simulation.                                           | `simulate_portfolio_A` for classic strategy. `simulate_portfolio_B_momentum` implements the dynamic hedge: updates equity, applies CFD financing (SOFR - broker fee), opens/closes short CFDs based on signals from `signal_generation.py`, applies spread costs, manages margin. |
+| `risk_metrics.py`       | Portfolio metrics computation.                                       | `calculate_metrics_summary` function computes a wide array of performance and risk metrics.                                                                                                                                                            |
+| `plotting.py`           | Visualization.                                                       | Generates Plotly charts for market data (S&P 500/VIX), portfolio performance comparisons, and specific crisis period analyses (e.g., COVID recovery with trough markers).                                                                                 |
+| `main_analysis.py`      | Main execution script.                                               | Orchestrates calls to other modules: loads config, loads data, generates signals, runs simulations for full and crisis periods, calculates metrics, prints hypothesis testing results, and calls plotting functions.                                     |
 
-## 💼 Relevance for Portfolio Managers & Investors
+## 💼 Relevance
 
-Understanding the practical implications of using CFDs defensively can be valuable:
+This project provides insights into:
 
-*   **Hedging Tool:** Provides a way to potentially reduce downside risk during volatility spikes without selling core equity holdings.
-*   **Tactical Flexibility:** CFDs allow for relatively quick implementation of short positions compared to other methods.
-*   **Cost-Benefit Analysis:** Quantifies the direct costs (financing, borrowing, spread) associated with this hedging strategy versus the potential benefit of reduced drawdowns.
-*   **Risk Awareness:** Highlights that even defensive strategies have trade-offs (lower overall returns) and are not foolproof (performance varies depending on crisis characteristics).
-
-<br>
+*   **Dynamic Hedging:** Evaluating a rules-based VIX momentum strategy for activating CFD hedges.
+*   **Crisis Performance:** Assessing how such a strategy performs during market stress versus normal conditions.
+*   **Cost Impact:** Quantifying the effect of CFD trading costs on overall portfolio results.
+*   **Risk-Return Trade-offs:** Understanding the balance between potential risk reduction and performance drag.
 
 ## 🧪 Methodology
 
-1.  **Data Acquisition:** Historical daily data for S&P 500, VIX (fetched or loaded), and SOFR (loaded) from 2019 to mid-2025 is prepared.
-2.  **Configuration:** Simulation parameters (capital, allocation, VIX threshold, hedge ratio, costs) are defined in `config/params.yaml`.
-3.  **Model Simulation:**
-    *   **Model A:** The 80/20 S&P 500/Cash portfolio value is calculated daily based on S&P 500 returns.
+1.  **Configuration:** Parameters are set in `config.py`.
+2.  **Data Acquisition & Preparation (`data_loader.py`):**
+    *   S&P 500 and VIX data fetched from FMP API.
+    *   SOFR data loaded from `SOFR.csv`.
+    *   Data is merged, cleaned, and basic returns calculated.
+3.  **Signal Generation (`signal_generation.py`):**
+    *   VIX momentum signals (`Short_Signal_Today`, `Cover_Signal_Momentum_Today`, `Cover_Signal_Absolute_VIX_Today`) are generated daily based on parameters in `config.py`.
+4.  **Model Simulation (`simulation_engine.py`):**
+    *   **Model A:** Value calculated daily based on S&P 500 returns and static allocation.
     *   **Model B:**
-        *   Equity portion value changes based on S&P 500 returns.
-        *   Each day, the VIX level is checked against the threshold (`config['hedging_strategy']['vix_threshold']`).
-        *   If VIX > threshold, the `hedging_strategy.py` calculates the target number of short S&P 500 CFD contracts based on the `hedge_ratio` and current equity value.
-        *   The simulation adjusts the number of contracts held, calculates required margin using `cfd_cost_model.py`, and updates cash available.
-        *   If already hedged, daily P&L from the short CFD position, overnight financing costs/credits, and borrowing costs are calculated and applied to the cash balance.
-        *   Spread costs are applied when CFD positions are closed.
-        *   Total portfolio value (Equity + Free Cash + Margin Held) is tracked daily.
-4.  **Analysis:**
-    *   Performance and risk metrics (`risk_metrics.py`) are calculated for both portfolios over the full period and defined crisis periods.
-    *   Results are compared, and the hypotheses (`analysis.py`) are evaluated based on the calculated metrics.
-5.  **Visualization:** Key results are plotted using `plotting.py` (portfolio growth, VIX trigger, costs, contracts/margin).
-
-<br>
+        *   Equity portion tracks S&P 500.
+        *   Daily, checks signals:
+            *   If `Short_Signal_Today` is true and not hedged: open short CFD hedge (calculating notional, deducting margin, applying entry price).
+            *   If hedged and (`Cover_Signal_Momentum_Today` or `Cover_Signal_Absolute_VIX_Today`) is true: close CFD hedge (calculating P&L, applying spread cost, returning margin).
+        *   Daily CFD financing costs/credits (SOFR - Broker Fee) applied to cash if CFD is active.
+        *   Portfolio rebalanced daily to target equity/cash allocations.
+5.  **Analysis & Metrics (`main_analysis.py`, `risk_metrics.py`):**
+    *   Simulations run for the full period and specified crisis periods.
+    *   Comprehensive performance and risk metrics calculated.
+    *   Hypotheses evaluated based on these metrics.
+6.  **Visualization (`plotting.py`):** Key results are plotted.
 
 ## 📈 Hypotheses Evaluated
 
-The simulation results are used to assess the following hypotheses:
+The simulation results are used to assess hypotheses (H1-H6) regarding the VIX-momentum CFD hedging strategy's impact on:
 
-| Category         | Hypothesis                                                        | Expected Outcome based on Simulation | Finding (Example based on previous run) |
-| :--------------- | :---------------------------------------------------------------- | :----------------------------------- | :-------------------------------------- |
-| Performance      | **H1:** CFDs lead to higher average returns                       | Unlikely due to costs/drag           | Check [_results_](https://github.com/shekharbiswas/CFD_Simulation/tree/main/results)                        |
-| Risk             | **H2:** CFDs increase volatility                                  | Unlikely (used defensively)          | Check results                            |
-| Sharpe Ratio     | **H3:** CFDs improve risk-adjusted returns                        | Possible if risk reduction is large  | Check results                  |
-| Diversification  | **H4:** CFDs enhance risk reduction despite inherent leverage | Expected (Lower MDD/Vol)             | Check results                              |
-| Crisis Response  | **H5:** CFD portfolios react more strongly (magnitude) to crises | Mixed (Depends on crisis)            | Check results      |
+*   **H1:** Average portfolio return.
+*   **H2:** Overall portfolio volatility.
+*   **H3:** Risk-adjusted return (Sharpe Ratio).
+*   **H4:** Risk reduction (Max Drawdown and Volatility).
+*   **H5:** Portfolio reaction magnitude during the acute COVID-19 crisis.
+*   **H6:** Strength of recovery post-COVID trough compared to the classic portfolio.
 
-<br>
+*Detailed findings for each hypothesis are printed to the console by `main_analysis.py`.*
 
 ## 📉 CFD Cost Assumptions (Modeled)
 
-Based on IG Markets (2024) information from source documents:
-
-| Cost Component        | Treatment in Simulation                                                               | Notes                                                     |
-| :-------------------- | :------------------------------------------------------------------------------------ | :-------------------------------------------------------- |
-| Spread                | ✅ Applied average point cost (`avg_spread_points`) when closing short hedge positions. | Represents round-trip cost. Time-of-day variation excluded. |
-| Financing (O/N)       | ✅ Calculated daily for short positions: `SOFR - broker_annual_financing_fee`.        | Can be a cost or credit. Based on `days_in_year_financing`. |
-| Borrowing (Short CFD) | ✅ Calculated daily for short positions: `borrowing_cost_annual`.                       | Added cost specific to shorts.                            |
-| Margin                | ✅ Calculated daily using tiered rates; cash is allocated, reducing free cash.          | Affects available cash but not directly P&L.              |
-| Commissions           | ❌ Excluded (Source indicated spread used instead for index CFDs).                    | Assume index CFD, not share CFD.                          |
-| Slippage              | ❌ Excluded (Difficult to model historically).                                          | Limitation of the simulation.                             |
-| Currency Conversion   | ❌ Excluded (Assumes USD base for portfolio and index).                               | Limitation.                                               |
-
-<br>
+*   **Spread:** Applied as a percentage cost (`SPREAD_COST_PERCENT`) on the notional value when closing short hedge positions.
+*   **Financing (Overnight):** Calculated daily for active short CFD positions. The net rate is `(SOFR_Rate_Daily - BROKER_FEE_ANNUALIZED_Daily)`. A positive result is a credit to cash; a negative result is a debit.
+*   **Margin:** A percentage (`CFD_INITIAL_MARGIN_PERCENT`) of the CFD's notional value is deducted from cash when a position is opened and returned when closed. This affects available cash but not directly P&L until a position is closed or financing is considered on potentially reduced cash balances (implicitly handled by overall portfolio rebalancing).
+*   *Commissions, Slippage, Currency Conversion are currently excluded for simplicity.*
 
 ## 🗂 Setup and Usage
 
-### Setup
+### Prerequisites
 
-1.  **Clone Repository:**
+*   Python 3.8+
+*   Required libraries (see `requirements.txt` if provided, or install manually):
+    ```bash
+    pip install pandas numpy requests plotly
     ```
-    # (No bash commands here, assuming user clones manually)
-    # Navigate to the project directory: cfd_simulation/
+
+### Setup and Configuration
+
+1.  **API Key**:
+    *   Open `config.py`.
+    *   Replace the placeholder value for `FMP_API_KEY` with your actual FMP API key:
+        ```python
+        FMP_API_KEY = "YOUR_ACTUAL_FMP_API_KEY"
+        ```
+
+2.  **SOFR Data**:
+    *   Ensure `SOFR.csv` is in the project's root directory. It must contain `observation_date` and `SOFR` (as percentage) columns.
+    *   Adjust `SOFR_CSV_FILEPATH` in `config.py` if needed.
+    *   `TARGET_SOFR_COL_NAME` in `config.py` should match the CSV's SOFR value column name.
+
+3.  **Review `config.py`**: Adjust dates, initial capital, allocations, VIX signal parameters, and CFD costs as desired.
+
+### Running the Simulation
+
+1.  Navigate to the project's root directory in your terminal.
+2.  Execute `main_analysis.py`:
+    ```bash
+    python main_analysis.py
     ```
-2.  **Create Environment (Recommended):**
-    ```
-    # (Instructions for virtual environment creation omitted as requested)
-    # Activate the environment if created.
-    ```
-3.  **Install Dependencies:**
-    ```
-    # Ensure pip is available
-    # Run from the project root directory:
-    pip install -r requirements.txt
-    ```
-4.  **Data File:** Place your `vix_sp500_data.csv` file inside the `data/` directory. It **must** contain columns for date, S&P 500 price, VIX level, and the SOFR rate.
-5.  **API Key (Optional, for Fetching):**
-    *   Create a `.env` file in the project root (`cfd_simulation/.env`).
-    *   Add your FMP API key to the `.env` file: `FMP_API_KEY="your_actual_key_here"`
-    *   **Ensure `.env` is listed in your `.gitignore` file.**
-    *   Alternatively, set the `FMP_API_KEY` environment variable in your system or terminal session before running.
-6.  **Configuration:** Review and modify parameters in `config/params.yaml`. Pay attention to `load_from_api` if you want to fetch data.
 
-### Usage
+### Expected Output
 
-#### Command-Line Execution
+*   Console messages detailing simulation progress.
+*   Plotly charts displayed in your web browser (market data, full portfolio performance, COVID crisis/recovery analysis).
+*   A console table summarizing full-period financial metrics.
+*   Console output of findings for Hypotheses H1-H6.
 
-*   Navigate to the project root directory (`cfd_simulation/`) in your terminal.
-*   To run the analysis using the settings in `params.yaml`:
-    ```
-    python run.py
-    ```
-*   If you want to fetch data using the API key stored in your environment or `.env` file, ensure `load_from_api: true` is set in `config/params.yaml` before running the command above. The script will handle finding the key.
+### Troubleshooting
 
-#### Interactive Web Application (Streamlit)
-
-*   Navigate to the project root directory (`cfd_simulation/`) in your terminal.
-*   Launch the Streamlit app:
-    ```
-    streamlit run app.py
-    ```
-*   The application will open in your web browser.
-*   Use the sidebar to adjust key parameters (Initial Capital, VIX Threshold, Hedge Ratio).
-*   Click "Run Analysis" to execute the simulations and view results interactively. The app uses the API key setup (env var or `.env`) if data fetching is triggered (which usually happens on the first run or if data loading fails).
-
-## 👤 Who Should Use This Project?
-
-*   **Finance Students & Educators:** As a practical example of derivatives application, risk management, and quantitative simulation.
-*   **Portfolio and Fund Managers:** To explore potential defensive strategies and understand the cost/benefit of VIX-based hedging.
-*   **Retail Investors:** To gain insight into the mechanics and risks of CFDs used for hedging (educational purposes, **not** investment advice).
-*   **Risk Management Analysts:** To model and quantify the impact of specific hedging instruments and triggers.
-*   **Researchers:** Studying market behavior, volatility dynamics, and crisis performance.
-
-## 🌐 Why This Project Matters
-
-While CFDs carry significant risks, especially when used speculatively with high leverage, understanding their potential defensive applications is valuable in modern finance. This project aims to provide a quantitative perspective on:
-
-*   **Crisis Navigation:** Can VIX-triggered CFD hedges offer meaningful protection during market downturns?
-*   **Dynamic Hedging:** Evaluating the feasibility and outcome of an automated, volatility-based hedging rule.
-*   **Cost vs. Benefit:** Quantifying the performance drag from costs against the value of reduced drawdown.
-*   **Strategy Limitations:** Demonstrating that effectiveness can vary significantly depending on market conditions (e.g., COVID vs. 2025 scenario).
-
-By simulating this specific strategy with realistic costs, the project offers insights into the practical trade-offs involved in incorporating such tools into portfolio management.
-
-[CFD_app](https://github.com/shekharbiswas/CFD_app)
+*   **`FileNotFoundError: 'SOFR.csv'`**: Check `SOFR.csv` location and `SOFR_CSV_FILEPATH` in `config.py`.
+*   **API Key Errors (FMP)**: Verify `FMP_API_KEY`, internet connection, and FMP plan limits.
+*   **Plots Not Showing**: Ensure browser pop-ups are allowed.
+*   **`KeyError`/`AttributeError`**: Check for missing data columns or misconfigured parameters in `config.py`.
+*   **Performance**: Initial data fetching via API can be slow.
